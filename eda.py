@@ -25,7 +25,10 @@ print(df_clean.isnull().sum())
 df_clean.dropna(inplace=True)
 print(df_clean.isnull().sum())
 
+############################
+### Check summary statistics
+############################
 
-
+print(df_clean.describe())
 
 
