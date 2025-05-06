@@ -1,4 +1,6 @@
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 ##################
 ### Import CSV 
@@ -31,4 +33,12 @@ print(df_clean.isnull().sum())
 
 print(df_clean.describe())
 
+######################
+### Correlation Matrix
+######################
+
+plt.figure(figsize=(10, 6))
+sns.heatmap(df_clean.corr(numeric_only=True), annot=True, cmap='coolwarm')
+plt.title("Correlation Matrix")
+plt.show()
 
