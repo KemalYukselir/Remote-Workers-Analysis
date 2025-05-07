@@ -22,6 +22,7 @@ class DecisionTreeModel():
         self.df_model = df.copy()
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
         self.treeclf = self.fit_model()
+        self.evaluate_model()
 
     def split_train_test(self):
         """ 
@@ -30,21 +31,21 @@ class DecisionTreeModel():
         - Check for no index errors
         """
         feature_cols = list(self.df_model.columns)
-        
+
         # Target is Mental_Health_Condition
         feature_cols.remove('Mental_Health_Condition')
         X = self.df_model[feature_cols]
         y = self.df_model['Mental_Health_Condition']
 
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=4992)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4992)
 
-        # Check for no index errors
-        if self.DEBUG:
-            print(all(self.X_train.index == self.y_train.index))
-            print(all(self.X_test.index == self.y_test.index))
+        return X_train, X_test, y_train, y_test
+
 
     def fit_model(self):
-        """ Fit train to Decision Tree """
+        """ 
+        - Fit train to Decision Tree 
+        """
         # Creating model with fine tune parqams (Max depth 4 from grid search)
         treeclf = DecisionTreeClassifier(max_depth=4)
 
@@ -52,3 +53,26 @@ class DecisionTreeModel():
         treeclf.fit(self.X_train, self.y_train)
 
         return treeclf
+    
+    def evaluate_model(self):
+        """ 
+        - Generate y predictions
+        - Evaluate on accuracy, precision, recall, f1
+        """
+
+        y_pred = self.treeclf.predict(self.X_test) # Getting predictions
+
+        # Check metrics
+        accuracy = accuracy_score(self.y_test, y_pred)
+        precision = precision_score(self.y_test, y_pred)
+        recall = recall_score(self.y_test, y_pred)
+        f1 = f1_score(self.y_test, y_pred)
+
+        print(f"Accuracy:  {accuracy:.4f}")
+        print(f"Precision: {precision:.4f}")
+        print(f"Recall:    {recall:.4f}")
+        print(f"F1 Score:  {f1:.4f}")
+
+
+if __name__ == "__main__":
+    DecisionTreeModel()
