@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 
 
 class ClashEda():
-
+    DEBUG = True
     def __init__(self):
         # Import CSV
-        self.df = pd.read_csv('data/clash_royale_cards.csv')
+        self.df = pd.read_csv('data/Impact_of_Remote_Work_on_Mental_Health.csv')
         self.df_clean = ""
-
-        self.run()
+        self.handle_nulls()
+        if self.DEBUG:
+            self.run()
     
     def check_unique(self):
         """ 
@@ -18,7 +19,7 @@ class ClashEda():
         - Decide what to do with every column.
         """
         for col in self.df.columns:
-            print(f"{col}: {self.df[col].unique()}")
+            print(f"\n{col}: {self.df[col].unique()}\n")
     
     def handle_nulls(self):
         """
@@ -26,15 +27,19 @@ class ClashEda():
         - Only one row with null - can be dropped
         """
         self.df_clean = self.df.copy()
-        self.df_clean.info()
-        print(self.df_clean.isnull().sum())
+        if self.DEBUG:
+            self.df_clean.info()
+            print(self.df_clean.isnull().sum())
 
-        # Only one null -> Can be dropped
-        self.df_clean.dropna(inplace=True)
-        print(self.df_clean.isnull().sum())
+        # Target - Have to drop nulls
+        self.df_clean.dropna(subset=["Mental_Health_Condition"],inplace=True)
+        self.df_clean["Physical_Activity"] = self.df_clean["Physical_Activity"].fillna("Unknown")
+        if self.DEBUG:
+            print(self.df_clean.isnull().sum())
     
     def summary_statistics(self):
         """ Check numerical stats of every column """
+        print(self.df_clean.shape)
         print(self.df_clean.describe())
 
     def correlation_matrix(self):
@@ -47,9 +52,11 @@ class ClashEda():
     def run(self):
         """ Auto run when class is called """
         self.check_unique()
-        self.handle_nulls()
         self.summary_statistics()
         self.correlation_matrix()
+    
+    def get_dataframe(self):
+        return self.df_clean
 
 if __name__ == "__main__":
     ClashEda()
