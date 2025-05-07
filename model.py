@@ -22,13 +22,14 @@ class DecisionTreeModel():
         self.df_model = df.copy()
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
         self.check_target_balance()
-        # self.treeclf = self.fit_model()
-        # self.evaluate_model()
+        self.X_train_fe , self.X_test_fe = self.prepare_features()
+        self.treeclf = self.fit_model()
+        self.evaluate_model()
 
     def split_train_test(self):
         """ 
         - Set target and features 
-        - Split train and test to 80% 20%
+        - Split train and test to 80% - 20%
         - Check for no index errors
         """
         feature_cols = list(self.df_model.columns)
@@ -54,6 +55,45 @@ class DecisionTreeModel():
         """
         print(self.df_model['Mental_Health_Condition'].value_counts(normalize=True))
 
+    def feature_engineering(self, df):
+        ##################
+        ## Feature engineering
+        ##################
+
+        df = df.copy()
+
+        # Drop irrelevant or highly collinear columns
+        df.drop(columns=[
+            "Employee_ID",  # Useless
+        ], inplace=True)
+
+        for col in df.select_dtypes(include='object'):
+            le = LabelEncoder()
+            df[col] = le.fit_transform(df[col])
+
+        return df
+
+    def prepare_features(self):
+        ##################
+        ## Feature engineering
+        ##################
+
+        print(self.df_model.info())
+
+        for col in self.df_model.select_dtypes(include='object').columns:
+            print(f"\n{col}: {self.df_model[col].unique()}\n")
+
+        # Feature engineering for train and test sets
+        X_train_fe = self.feature_engineering(self.X_train)
+        X_test_fe = self.feature_engineering(self.X_test)
+
+        # Check index
+        if self.DEBUG:
+            print(all(X_train_fe.index == self.X_train.index))
+            print(all(X_test_fe.index == self.X_test.index))
+
+        return X_train_fe, X_test_fe
+
     def fit_model(self):
         """ 
         - Fit train to Decision Tree 
@@ -62,7 +102,7 @@ class DecisionTreeModel():
         treeclf = DecisionTreeClassifier(max_depth=4)
 
         # Fitting/training model with the data
-        treeclf.fit(self.X_train, self.y_train)
+        treeclf.fit(self.X_train_fe, self.y_train)
 
         return treeclf
     
@@ -72,7 +112,7 @@ class DecisionTreeModel():
         - Evaluate on accuracy, precision, recall, f1
         """
 
-        y_pred = self.treeclf.predict(self.X_test) # Getting predictions
+        y_pred = self.treeclf.predict(self.X_test_fe) # Getting predictions
 
         # Check metrics
         accuracy = accuracy_score(self.y_test, y_pred)
