@@ -21,6 +21,7 @@ class DecisionTreeModel():
     def __init__(self):
         self.df_model = df.copy()
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
+        self.treeclf = self.fit_model()
 
     def split_train_test(self):
         """ 
@@ -29,6 +30,8 @@ class DecisionTreeModel():
         - Check for no index errors
         """
         feature_cols = list(self.df_model.columns)
+        
+        # Target is Mental_Health_Condition
         feature_cols.remove('Mental_Health_Condition')
         X = self.df_model[feature_cols]
         y = self.df_model['Mental_Health_Condition']
@@ -39,3 +42,13 @@ class DecisionTreeModel():
         if self.DEBUG:
             print(all(self.X_train.index == self.y_train.index))
             print(all(self.X_test.index == self.y_test.index))
+
+    def fit_model(self):
+        """ Fit train to Decision Tree """
+        # Creating model with fine tune parqams (Max depth 4 from grid search)
+        treeclf = DecisionTreeClassifier(max_depth=4)
+
+        # Fitting/training model with the data
+        treeclf.fit(self.X_train, self.y_train)
+
+        return treeclf
