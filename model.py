@@ -99,39 +99,44 @@ class DecisionTreeModel():
 
     def fit_model(self):
         """ 
-        - Fit train to Decision Tree 
+        - Fit and fine-tune a Decision Tree using GridSearchCV
         """
-        # Creating model with fine tune parqams (Max depth 4 from grid search)
-        treeclf = DecisionTreeClassifier()
+        grid = GridSearchCV(
+            estimator=DecisionTreeClassifier(), 
+            param_grid = {
+                'criterion': ['gini', 'entropy', 'log_loss'],         # Splitting criteria
+                'max_depth': [3, 5, 7, 10, None],                    # Tree depth control
+                'min_samples_split': [2, 5, 10],                     # Minimum samples to split an internal node
+                'min_samples_leaf': [1, 2, 4],                       # Minimum samples required at a leaf node
+            },            
+            cv=10,
+            refit=True,
+            verbose=2,
+            scoring='accuracy'  # Use 'recall_weighted' for multiclass support
+        )
+        
+        grid.fit(self.X_train_fe, self.y_train)
 
-        # Fitting/training model with the data
-        treeclf.fit(self.X_train_fe, self.y_train)
+        # Use the best model found
+        treeclf = grid.best_estimator_
 
         return treeclf
     
     def evaluate_model(self):
         """ 
-        - Generate y predictions
-        - Evaluate on accuracy, precision, recall, f1
+        Evaluate model on accuracy, precision, recall, F1, and confusion matrix
         """
+        y_train_pred = self.treeclf.predict(self.X_train_fe)
+        y_test_pred = self.treeclf.predict(self.X_test_fe)
 
-        y_pred = self.treeclf.predict(self.X_test_fe)  # Getting predictions
+        print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
+        print(f"🧾 Testing Accuracy:  {accuracy_score(self.y_test, y_test_pred):.4f}")
 
-        # Check metrics
-        accuracy = accuracy_score(self.y_test, y_pred)
-        precision = precision_score(self.y_test, y_pred, average='weighted')
-        recall = recall_score(self.y_test, y_pred, average='weighted')
-        f1 = f1_score(self.y_test, y_pred, average='weighted')
+        print("\n📊 Classification Report:")
+        print(classification_report(self.y_test, y_test_pred))
 
-        print(f"Accuracy:  {accuracy:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall:    {recall:.4f}")
-        print(f"F1 Score:  {f1:.4f}")
-
-        # Optional: print classification report
-        print("\nClassification Report:")
-        print(classification_report(self.y_test, y_pred))
-
+        print("\n📉 Confusion Matrix:")
+        print(confusion_matrix(self.y_test, y_test_pred))
 
 
 if __name__ == "__main__":
