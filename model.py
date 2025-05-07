@@ -21,8 +21,9 @@ class DecisionTreeModel():
     def __init__(self):
         self.df_model = df.copy()
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
-        self.treeclf = self.fit_model()
-        self.evaluate_model()
+        self.check_target_balance()
+        # self.treeclf = self.fit_model()
+        # self.evaluate_model()
 
     def split_train_test(self):
         """ 
@@ -40,7 +41,18 @@ class DecisionTreeModel():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=4992)
 
         return X_train, X_test, y_train, y_test
-
+    
+    def check_target_balance(self):
+        """
+        - DT are sensitive to imbalance
+        - Check and handel target class
+        Results:
+            - Burnout             0.2560
+            - Anxiety             0.2556
+            - Depression          0.2492
+            - No Mental Health    0.2392
+        """
+        print(self.df_model['Mental_Health_Condition'].value_counts(normalize=True))
 
     def fit_model(self):
         """ 

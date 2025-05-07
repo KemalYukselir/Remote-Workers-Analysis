@@ -1,9 +1,10 @@
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 class ClashEda():
-    DEBUG = True
+    DEBUG = False
     def __init__(self):
         # Import CSV
         self.df = pd.read_csv('data/Impact_of_Remote_Work_on_Mental_Health.csv')
@@ -17,7 +18,7 @@ class ClashEda():
         Print all unique values in each column of the dataset.
         - Decide what to do with every column.
         """
-        for col in self.df.columns:
+        for col in self.df_clean.columns:
             print(f"\n{col}: {self.df[col].unique()}\n")
     
     def handle_nulls(self):
@@ -31,8 +32,8 @@ class ClashEda():
             print(self.df_clean.isnull().sum())
 
         # Target - Have to drop nulls
-        self.df_clean.dropna(subset=["Mental_Health_Condition"],inplace=True)
-        self.df_clean["Physical_Activity"] = self.df_clean["Physical_Activity"].fillna("Unknown")
+        self.df_clean["Mental_Health_Condition"] = self.df_clean["Mental_Health_Condition"].fillna("No Mental Health")
+        self.df_clean["Physical_Activity"] = self.df_clean["Physical_Activity"].fillna("No activity")
         if self.DEBUG:
             print(self.df_clean.isnull().sum())
     
