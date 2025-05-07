@@ -2,7 +2,6 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-
 class ClashEda():
     DEBUG = True
     def __init__(self):
@@ -41,6 +40,7 @@ class ClashEda():
         """ Check numerical stats of every column """
         print(self.df_clean.shape)
         print(self.df_clean.describe())
+        print(self.df_clean.info())
 
     def correlation_matrix(self):
         """ Check correlation between every feature """
