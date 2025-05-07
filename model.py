@@ -12,6 +12,7 @@ from sklearn.model_selection import GridSearchCV #
 from sklearn.metrics import (confusion_matrix, accuracy_score) # Performance check
 from sklearn.preprocessing import LabelEncoder # Encoding
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import classification_report
 
 # Load your dataset
 df = ClashEda().get_dataframe()
@@ -67,9 +68,11 @@ class DecisionTreeModel():
             "Employee_ID",  # Useless
         ], inplace=True)
 
-        for col in df.select_dtypes(include='object'):
-            le = LabelEncoder()
-            df[col] = le.fit_transform(df[col])
+        df = pd.get_dummies(df, drop_first=True)
+
+        # for col in df.select_dtypes(include='object'):
+        #     le = LabelEncoder()
+        #     df[col] = le.fit_transform(df[col])
 
         return df
 
@@ -99,7 +102,7 @@ class DecisionTreeModel():
         - Fit train to Decision Tree 
         """
         # Creating model with fine tune parqams (Max depth 4 from grid search)
-        treeclf = DecisionTreeClassifier(max_depth=4)
+        treeclf = DecisionTreeClassifier()
 
         # Fitting/training model with the data
         treeclf.fit(self.X_train_fe, self.y_train)
@@ -112,18 +115,23 @@ class DecisionTreeModel():
         - Evaluate on accuracy, precision, recall, f1
         """
 
-        y_pred = self.treeclf.predict(self.X_test_fe) # Getting predictions
+        y_pred = self.treeclf.predict(self.X_test_fe)  # Getting predictions
 
         # Check metrics
         accuracy = accuracy_score(self.y_test, y_pred)
-        precision = precision_score(self.y_test, y_pred)
-        recall = recall_score(self.y_test, y_pred)
-        f1 = f1_score(self.y_test, y_pred)
+        precision = precision_score(self.y_test, y_pred, average='weighted')
+        recall = recall_score(self.y_test, y_pred, average='weighted')
+        f1 = f1_score(self.y_test, y_pred, average='weighted')
 
         print(f"Accuracy:  {accuracy:.4f}")
         print(f"Precision: {precision:.4f}")
         print(f"Recall:    {recall:.4f}")
         print(f"F1 Score:  {f1:.4f}")
+
+        # Optional: print classification report
+        print("\nClassification Report:")
+        print(classification_report(self.y_test, y_pred))
+
 
 
 if __name__ == "__main__":
