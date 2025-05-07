@@ -138,6 +138,13 @@ class DecisionTreeModel():
         print("\n📉 Confusion Matrix:")
         print(confusion_matrix(self.y_test, y_test_pred))
 
+        self.manual_check(y_test_pred)
+
+    def manual_check(self, y_test_pred):
+        # Manually checking predictions
+        df_final = pd.DataFrame({'Actual': self.y_test, 'Predicted': y_test_pred})
+        print(df_final.tail(10))
+
 
 if __name__ == "__main__":
     DecisionTreeModel()
