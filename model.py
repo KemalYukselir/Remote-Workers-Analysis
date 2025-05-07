@@ -140,6 +140,17 @@ class DecisionTreeModel():
 
         self.manual_check(y_test_pred)
 
+        print("\nMost important features\n")
+
+        self.show_feature_importance()
+
+    def show_feature_importance(self):
+        importances = self.treeclf.feature_importances_
+        features = self.X_train_fe.columns
+        sorted_idx = np.argsort(importances)[::-1]
+        print(sorted_idx)
+
+
     def manual_check(self, y_test_pred):
         # Manually checking predictions
         df_final = pd.DataFrame({'Actual': self.y_test, 'Predicted': y_test_pred})
