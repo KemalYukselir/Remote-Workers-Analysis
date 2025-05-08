@@ -26,9 +26,8 @@ class DecisionTreeModel():
     DEBUG = True
     def __init__(self):
         self.df_model = df.copy()
-        le = LabelEncoder()
-        for col in self.df_model.select_dtypes(include='object'):
-            self.df_model[col] = le.fit_transform(self.df_model[col])
+        # Encode target variable
+        self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0})
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
         self.check_target_balance()
         self.X_train_fe , self.X_test_fe = self.prepare_features()
@@ -57,14 +56,17 @@ class DecisionTreeModel():
         - DT are sensitive to imbalance
         - Check and handel target class
         Results:
-            - Burnout             0.2560
-            - Anxiety             0.2556
-            - Depression          0.2492
-            - No Mental Health    0.2392
+            treatment
+            1    0.506044
+            0    0.493956
         """
         print(self.df_model['treatment'].value_counts(normalize=True))
 
     def feature_engineering(self, df):
+        ##################
+        ## Feature engineering
+        ##################
+
         df = df.copy()
         
         important_features = [
@@ -79,7 +81,13 @@ class DecisionTreeModel():
             "Country",
             "mental_health_consequence"
         ]
-        return df[important_features]
+        df = df[important_features]
+
+        le = LabelEncoder()
+        for col in df.select_dtypes(include='object'):
+            df[col] = le.fit_transform(df[col])
+
+        return df
 
 
     def prepare_features(self):
@@ -161,23 +169,25 @@ class DecisionTreeModel():
 
         self.show_feature_importance()
 
-        # y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
-        # y_test_pred = (y_test_probs >= 0.7).astype(int)  # lower threshold to improve recall
+        y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
+        y_test_pred = (y_test_probs >= 0.7).astype(int)  # lower threshold to improve recall
 
-        # print("\n📊 Classification Report (threshold=0.4):")
-        # print(classification_report(self.y_test, y_test_pred))
+        print("\n📊 Classification Report (threshold=0.4):")
+        print(classification_report(self.y_test, y_test_pred))
 
 
     def show_feature_importance(self):
+        """ Show the top coloumns with the most significance"""
         importances = self.treeclf.feature_importances_
         features = self.X_train_fe.columns
         sorted_idx = np.argsort(importances)[::-1]
 
-        for idx in sorted_idx[:15]:  # top 15
+        for idx in sorted_idx[:10]:  # top 10
             print(f"{features[idx]}: {importances[idx]:.4f}")
 
 
     def manual_check(self, y_test_pred):
+        """ Eyeball check of the predictions """
         # Manually checking predictions
         df_final = pd.DataFrame({'Actual': self.y_test, 'Predicted': y_test_pred})
         print(df_final.head(10))
