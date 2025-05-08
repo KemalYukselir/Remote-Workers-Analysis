@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from EDARemoteWorkers import RemoteWorkersEda
+from EDARemoteWorkers import EDARemoteWorkers
 import numpy as np # Maths
 import pandas as pd # General data use
 
@@ -20,7 +20,7 @@ from sklearn.linear_model import LogisticRegression
 
 
 # Load your dataset
-df = RemoteWorkersEda().get_dataframe()
+df = EDARemoteWorkers().get_dataframe()
 
 class ModelRemoteWorkerAnalysis():
     DEBUG = True

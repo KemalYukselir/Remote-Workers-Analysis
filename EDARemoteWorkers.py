@@ -3,8 +3,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-class ClashEda():
-    DEBUG = True
+class EDARemoteWorkers():
+    DEBUG = False
     def __init__(self):
         # Import CSV
         self.df = pd.read_csv('data/survey.csv')
@@ -83,4 +83,4 @@ class ClashEda():
         return self.df_clean
 
 if __name__ == "__main__":
-    ClashEda()
+    EDARemoteWorkers()
