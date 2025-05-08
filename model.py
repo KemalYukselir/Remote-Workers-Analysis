@@ -65,18 +65,19 @@ class DecisionTreeModel():
         print(self.df_model['treatment'].value_counts(normalize=True))
 
     def feature_engineering(self, df):
-        return df
         df = df.copy()
-        df.drop(columns=["Employee_ID",'Industry'], inplace=True)
         
         important_features = [
-            "Access_to_Mental_Health_Resources",
-            "Stress_Level",
-            "Physical_Activity",
-            "Productivity_Change",
-            "Sleep_Quality",
-            "Work_Location",
-            "Company_Support_for_Remote_Work"
+            "work_interfere",
+            "family_history",
+            "care_options",
+            "benefits",
+            "anonymity",
+            "coworkers",
+            "phys_health_interview",
+            "obs_consequence",
+            "Country",
+            "mental_health_consequence"
         ]
         return df[important_features]
 
@@ -106,9 +107,6 @@ class DecisionTreeModel():
         """
         Fit a multi-class XGBoost model using GridSearchCV with SMOTE for class imbalance
         """
-        # Apply SMOTE for multi-class imbalance
-        sm = SMOTE(random_state=42)
-        X_train_res, y_train_res = sm.fit_resample(self.X_train_fe, self.y_train)
 
         # Define the parameter grid
         param_grid = {
@@ -135,7 +133,7 @@ class DecisionTreeModel():
         )
 
         # Fit the model
-        grid.fit(X_train_res, y_train_res)
+        grid.fit(self.X_train_fe, self.y_train)
 
         print("✅ Best XGBoost Params:", grid.best_params_)
         return grid.best_estimator_
