@@ -22,7 +22,7 @@ from sklearn.linear_model import LogisticRegression
 # Load your dataset
 df = ClashEda().get_dataframe()
 
-class DecisionTreeModel():
+class RemoteWorkerAnalysisModel():
     DEBUG = True
     def __init__(self):
         self.df_model = df.copy()
@@ -194,4 +194,4 @@ class DecisionTreeModel():
 
 
 if __name__ == "__main__":
-    DecisionTreeModel()
+    RemoteWorkerAnalysisModel()
