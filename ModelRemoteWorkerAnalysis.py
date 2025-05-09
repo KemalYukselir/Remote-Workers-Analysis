@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from EDARemoteWorkers import EDARemoteWorkers
+# from EDARemoteWorkers import EDARemoteWorkers
 import numpy as np # Maths
 import pandas as pd # General data use
 
@@ -19,13 +19,11 @@ from xgboost import XGBClassifier
 from sklearn.linear_model import LogisticRegression
 
 
-# Load your dataset
-df = EDARemoteWorkers().get_dataframe()
-
 class ModelRemoteWorkerAnalysis():
     DEBUG = True
     def __init__(self):
-        self.df_model = df.copy()
+        # Load your dataset
+        self.df_model = pd.read_csv('data/remote_workers.csv')
         # Encode target variable
         self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0})
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
@@ -151,13 +149,20 @@ class ModelRemoteWorkerAnalysis():
         """ 
         Evaluate model on accuracy, precision, recall, F1, and confusion matrix
         """
-        y_train_pred = self.treeclf.predict(self.X_train_fe)
-        y_test_pred = self.treeclf.predict(self.X_test_fe)
+
+        # Train
+        y_train_probs = self.treeclf.predict_proba(self.X_train_fe)[:, 1]
+        y_train_pred = (y_train_probs >= 0.6).astype(int)
+
+        # Test
+        y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
+        y_test_pred = (y_test_probs >= 0.6).astype(int)  # lower threshold to improve recall
 
         print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
         print(f"🧾 Testing Accuracy:  {accuracy_score(self.y_test, y_test_pred):.4f}")
 
-        print("\n📊 Classification Report:")
+
+        print("\n📊 Classification Report (threshold=0.4):")
         print(classification_report(self.y_test, y_test_pred))
 
         print("\n📉 Confusion Matrix:")
@@ -168,12 +173,6 @@ class ModelRemoteWorkerAnalysis():
         print("\nMost important features\n")
 
         self.show_feature_importance()
-
-        y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
-        y_test_pred = (y_test_probs >= 0.7).astype(int)  # lower threshold to improve recall
-
-        print("\n📊 Classification Report (threshold=0.4):")
-        print(classification_report(self.y_test, y_test_pred))
 
 
     def show_feature_importance(self):
