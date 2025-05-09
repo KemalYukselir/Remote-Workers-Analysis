@@ -1,22 +1,14 @@
-from sklearn.ensemble import RandomForestClassifier
-# from EDARemoteWorkers import EDARemoteWorkers
 import numpy as np # Maths
 import pandas as pd # General data use
 
-from sklearn import metrics # Measure performance of DT model
-
 # Import relevant DT libraries
-from imblearn.over_sampling import SMOTE
-from sklearn.tree import DecisionTreeClassifier # Import model
-from sklearn import tree # DT Visuals
 from sklearn.model_selection import train_test_split # Train test split
 from sklearn.model_selection import GridSearchCV #
 from sklearn.metrics import (confusion_matrix, accuracy_score) # Performance check
 from sklearn.preprocessing import LabelEncoder # Encoding
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
 from xgboost import XGBClassifier
-from sklearn.linear_model import LogisticRegression
 
 
 class ModelRemoteWorkerAnalysis():

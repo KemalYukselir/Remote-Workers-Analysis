@@ -10,3 +10,6 @@ def load_model():
 
 # Preload cached resources
 model = load_model()
+
+# Sidebar for navigation
+page = st.sidebar.button("📂 Select a Page", ["Project Overview","Ethical Standards","Insights" ,"Predictor"])
