@@ -45,6 +45,7 @@ httplib2==0.22.0
 idna==2.10
 imageio==2.35.1
 imageio-ffmpeg==0.5.1
+imbalanced-learn==0.12.4
 importlib_resources==6.4.5
 iniconfig==2.0.0
 isort==4.3.21
@@ -63,6 +64,7 @@ moviepy==1.0.3
 msgpack==1.1.0
 multidict==4.7.6
 narwhals==1.37.0
+nltk==3.9.1
 numpy==1.24.4
 packaging==24.2
 pandas==2.0.3
