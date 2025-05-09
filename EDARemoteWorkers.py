@@ -62,4 +62,4 @@ class EDARemoteWorkers():
         print(f"Dataframe saved to {filename}")
 
 if __name__ == "__main__":
-    EDARemoteWorkers().save_dataframe("data/remote_workers.csv")
+    EDARemoteWorkers()
