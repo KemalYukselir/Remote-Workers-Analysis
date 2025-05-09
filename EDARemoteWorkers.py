@@ -14,6 +14,7 @@ class EDARemoteWorkers():
         self.check_unique()
         if self.DEBUG:
             self.summary_statistics()
+            # self.plot_target_values()
     
     def check_unique(self):
         """ 
@@ -43,15 +44,22 @@ class EDARemoteWorkers():
         cols_to_drop = ["comments","Timestamp","state"]
         self.df_clean = self.df_clean.drop(columns=cols_to_drop)
 
-    
     def summary_statistics(self):
         """ Check numerical stats of every column """
         print(self.df_clean.shape)
         print(self.df_clean.describe())
         print(self.df_clean.info())
+        print(self.df_clean['remote_work'].value_counts())
 
     def get_dataframe(self):
         return self.df_clean
+    
+    def save_dataframe(self, filename):
+        """ Save the dataframe to a CSV file """
+        """ Save only remote workers"""
+        self.df_clean = self.df_clean[self.df_clean['remote_work'] == 'Yes']
+        self.df_clean.to_csv(filename, index=False)
+        print(f"Dataframe saved to {filename}")
 
 if __name__ == "__main__":
-    EDARemoteWorkers()
+    EDARemoteWorkers().save_dataframe("data/remote_workers.csv")
