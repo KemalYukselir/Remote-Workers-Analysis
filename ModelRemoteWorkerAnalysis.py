@@ -183,6 +183,18 @@ class ModelRemoteWorkerAnalysis():
         df_final = pd.DataFrame({'Actual': self.y_test, 'Predicted': y_test_pred})
         print(df_final.head(10))
 
+    def predict_from_model(self, input_df):
+        """
+        Predict using the model
+        """
+        # Feature engineering for input data
+        input_fe = self.feature_engineering(input_df)
+
+        # Predict using the trained model
+        prediction = self.treeclf.predict(input_fe)
+        
+        return prediction
+
 
 if __name__ == "__main__":
     ModelRemoteWorkerAnalysis()
