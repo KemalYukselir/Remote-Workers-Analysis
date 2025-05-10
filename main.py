@@ -27,44 +27,44 @@ st.sidebar.markdown("[Student Certify Rate](https://student-certify-rate.streaml
 def project_overview_page():
   st.title("📘 Project Overview 📘")
 
-  st.markdown("""
-  # 🌍 Remote Worker Analysis 🌍
-  ## By Kemal Yukselir
+  st.markdown(
+      """
+      # 🌍 **Remote Worker Analysis** 🌍
+      ## By **Kemal Yukselir**
 
-  ### Description:
-  This project explores workplace survey data to understand what influences whether individuals seek support for burnout. 
-  It uses data analysis, decision tree modelling, and comment analysis to highlight how personal and workplace conditions relate to burnout support.
-              
-  ### References
-  - [OSMI](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey)
+      ### **Description:**
+      This project explores workplace survey data to understand what influences whether individuals seek support for burnout. 
+      It uses data analysis, decision tree modelling, and comment analysis to highlight how personal and workplace conditions relate to burnout support.
 
-  ### Modules:
-  - Pandas  
-  - NumPy  
-  - Scikit-learn  
-  - Statsmodels  
-  - Category Encoders  
-  - Streamlit  
-  - Matplotlib  
-  - Seaborn
-  - itertools
+      ### **References:**
+      - [OSMI Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey)
 
-  ### Project Highlights:
-  With all ethical practise considered, this is the best model I can get with many reruns.
+      ### **Modules Used:**
+      - **Pandas**  
+      - **NumPy**  
+      - **Scikit-learn**  
+      - **Xgboost**  
+      - **GridSearchCV**  
+      - **Streamlit**  
+      - **Matplotlib**  
+      - **Seaborn**  
+      - **Nltk**
 
-  - 🧪 Training Accuracy: 0.8514
-  - 🧾 Testing Accuracy:  0.8649
-              
-  - 📊 Classification Report:
-                precision    recall  f1-score   support
+      ### **Project Highlights:**
+      With all ethical practices considered, this is the best model achieved after multiple iterations:
 
-            0       0.79      0.97      0.87        35
-            1       0.97      0.77      0.86        39
+      - 🧪 **Training Accuracy:** 0.8514
+      - 🧾 **Testing Accuracy:**  0.8649
 
-    accuracy                           0.86        74
-    macro avg       0.88      0.87      0.86        74
-    weighted avg    0.88      0.86      0.86        74
-  """)
+      #### **📊 Classification Report:**
+      | Metric         | Class 0 | Class 1 | Accuracy | Macro Avg | Weighted Avg |
+      |----------------|---------|---------|----------|-----------|--------------|
+      | **Precision**  | 0.79    | 0.97    |          | 0.88      | 0.88         |
+      | **Recall**     | 0.97    | 0.77    |          | 0.87      | 0.86         |
+      | **F1-Score**   | 0.87    | 0.86    | 0.86     | 0.86      | 0.86         |
+      | **Support**    | 35      | 39      | 74       |           |              |
+      """
+  )
 
 if page == "Project Overview":
     project_overview_page()
