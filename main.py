@@ -5,10 +5,18 @@ import numpy as np
 import pandas as pd
 import joblib 
 from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
+import streamlit.components.v1 as components
 
 @st.cache_resource
 def load_model():
     return ModelRemoteWorkerAnalysis()
+
+@st.cache_resource
+# Read the local HTML file
+def load_html():
+    with open("tableau_embed.html", 'r', encoding='utf-8') as f:
+        html_data = f.read()
+    return html_data
 
 # Preload cached resources
 model = load_model()
@@ -111,6 +119,14 @@ def ethical_standards_page():
     - [Ethics in AI and Data Science (UK Government Guide)](https://www.gov.uk/government/publications/data-ethics-framework/data-ethics-framework-2020)
     """)
 
+
+def insights_page():
+    st.title("📊 Remote Workers Burnout Dashboard")
+
+    # Display the HTML in Streamlit
+    components.html(load_html(), height=800, scrolling=True)
+
+
 def model_page():
     st.title("🧠 Burnout Support Predictor")
 
@@ -191,5 +207,7 @@ if page == "Project Overview":
     project_overview_page()
 elif page == "Ethical Standards":
     ethical_standards_page()
+elif page == "Insights":
+    insights_page()
 elif page == "Predictor":
     model_page()
