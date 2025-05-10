@@ -1,7 +1,9 @@
 import streamlit as st
 # Set page to perma wide
 st.set_page_config(layout="wide")
-import streamlit.components.v1 as components
+import numpy as np
+import pandas as pd
+import joblib 
 from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
 
 @st.cache_resource
@@ -109,8 +111,85 @@ def ethical_standards_page():
     - [Ethics in AI and Data Science (UK Government Guide)](https://www.gov.uk/government/publications/data-ethics-framework/data-ethics-framework-2020)
     """)
 
+def model_page():
+    st.title("🧠 Burnout Support Predictor")
+
+    st.subheader("Enter Your Information")
+
+    country = st.selectbox("Country", [
+        'United States', 'France', 'United Kingdom', 'Canada', 'Poland', 'Australia',
+        'Germany', 'Russia', 'Costa Rica', 'Austria', 'Mexico', 'South Africa',
+        'Ireland', 'Romania', 'Brazil', 'Uruguay', 'New Zealand', 'Netherlands',
+        'Finland', 'Bosnia and Herzegovina', 'Hungary', 'Singapore', 'Japan', 'India',
+        'Bulgaria', 'Croatia', 'Bahamas, The', 'Greece', 'China'
+    ])
+
+    work_interfere = st.selectbox("How often does burnout interfere with your work?", [
+        "Never", "Rarely", "Sometimes", "Often", "N/A"
+    ])
+
+    family_history = st.selectbox("Do you have a family history of mental health issues?", [
+        "Yes", "No"
+    ])
+
+    care_options = st.selectbox("Do you know what mental health care options your employer provides?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    benefits = st.selectbox("Does your employer offer mental health benefits?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    anonymity = st.selectbox("Is your anonymity protected when using support services?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    coworkers = st.selectbox("Would you discuss burnout with coworkers?", [
+        "Yes", "No", "Some of them"
+    ])
+
+    phys_health_interview = st.selectbox("Would you mention physical health issues in an interview?", [
+        "Yes", "No", "Maybe"
+    ])
+
+    obs_consequence = st.selectbox("Have you seen negative consequences for coworkers with burnout?", [
+        "Yes", "No"
+    ])
+
+    mental_health_consequence = st.selectbox("Do you think disclosing burnout could have negative consequences?", [
+        "Yes", "No", "Maybe"
+    ])
+
+    # Construct input DataFrame
+    input_dict = {
+        "Country": [country],
+        "work_interfere": [work_interfere],
+        "family_history": [family_history],
+        "care_options": [care_options],
+        "benefits": [benefits],
+        "anonymity": [anonymity],
+        "coworkers": [coworkers],
+        "phys_health_interview": [phys_health_interview],
+        "obs_consequence": [obs_consequence],
+        "mental_health_consequence": [mental_health_consequence]
+    }
+
+    input_df = pd.DataFrame(input_dict)
+
+    # Load your pre-trained model and encoder (optional)
+    # model = joblib.load("your_model.pkl")
+    # encoder = joblib.load("your_encoder.pkl")
+    # input_encoded = encoder.transform(input_df)
+
+    if st.button("Predict Burnout Support Seeking"):
+        prediction = model.predict_from_model(input_df)
+        print(prediction)
+        st.success(f"Predicted class: {'This person will likely feel burnout' if prediction[0] == 1 else 'This person will not feel burnout'}")
+
 
 if page == "Project Overview":
     project_overview_page()
 elif page == "Ethical Standards":
     ethical_standards_page()
+elif page == "Predictor":
+    model_page()
