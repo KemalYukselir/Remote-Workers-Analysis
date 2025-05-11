@@ -126,6 +126,20 @@ def insights_page():
     # Display the HTML in Streamlit
     components.html(load_html(), height=800, scrolling=True)
 
+    st.markdown("""
+    ### **Key Insights:**
+    - Firstly, an alarming 52.703% of Remote workers reported feeling burnout.
+    - Before we dive in further, I want to highlight to employers this problem affects them and the company as a whole. Not just the employee.
+    - We can see out of those who burnout, most of them feel that it "often" and "sometimes" affects the work they do.
+    - Then I wanted to check if the type of company was the main reason for the burnout.
+    - From the graphs, we can see that Tech and non tech comapnies have nearly equal distribution of burnout. So we can rule out that the type of company is not the main reason for the burnout.
+    - So it must be a company structural issue in the workpalce.
+    
+    - The rest of the visualisations show some key factors affecting burnout.
+    - First Graph shows comapnies don't include burnout solutions in their wellness programs.
+    - Second Graph shows companies doesnt provide resources to seek help.
+    """)
+
 
 def model_page():
     st.title("🧠 Burnout Support Predictor")
