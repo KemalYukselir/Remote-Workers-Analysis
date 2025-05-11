@@ -133,11 +133,18 @@ def insights_page():
     - We can see out of those who burnout, most of them feel that it "often" and "sometimes" affects the work they do.
     - Then I wanted to check if the type of company was the main reason for the burnout.
     - From the graphs, we can see that Tech and non tech comapnies have nearly equal distribution of burnout. So we can rule out that the type of company is not the main reason for the burnout.
-    - So it must be a company structural issue in the workpalce.
+    - So it must be a company structural issue in the workplace.
     
     - The rest of the visualisations show some key factors affecting burnout.
     - First Graph shows comapnies don't include burnout solutions in their wellness programs.
-    - Second Graph shows companies doesnt provide resources to seek help.
+    - Second Graph shows companies doesn't provide resources to seek help.
+                
+    ## **Conclusion:**
+    There is significant burnout when it comes to remote working. Both employees, employers and the company as a whole need to be aware of this since it affects all parties.
+    It has been concluded that the type of company is not the main reason for the burnout. It is a structural issue in the workplace.
+    Some key insights show that companies need to invest more in their complyee wellness programs for remote workers and provide resources to seek help.
+    This could be weekly check ins, gym membership incentives, or even just a simple coffee break with the team.
+
     """)
 
 
