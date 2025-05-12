@@ -129,8 +129,8 @@ def insights_page():
     st.markdown("""
     ### **Key Insights:**
     **Figure 1:**
-    - Lets first check how big the burnout problem is.
-    - Firstly, an alarming 52.703% of Remote workers reported feeling burnout.
+    - First I wanted to check how big the burnout problem is.
+    - An alarming 52.703% of Remote workers reported feeling burnout.
                 
     **Figure 2:**
     - Before we dive in further, I want to highlight to employers this problem affects them and the company as a whole. Not just the employee.
@@ -143,10 +143,19 @@ def insights_page():
     - So it must be a company structural issue in the workplace.
     
     **Figure 4:**
-    - The rest of the visualisations show some key factors affecting burnout.
-    - First Graph shows comapnies don't include burnout solutions in their wellness programs.
-    - Second Graph shows companies doesn't provide resources to seek help.
-                
+    - Figure 4 shows that on average, the less employees a comapny has, the more liekly they are to burnout.
+    - Could this indicate that smaller companies have more pressure on their employees?
+    - Or could it be that larger companies have more resources to help their employees?
+
+    **Figure 5:**
+    - Figure 5 shows that most employees who are burnt out, their company does not offer mental health as part of their employee wellness program.
+    - This shows that comapnies need to invest more in their employee wellness programs to avoid burnout.
+    - This could be weekly check ins, gym membership incentives, or even just a simple coffee break with the team.
+    
+    **Figure 6:**
+    - Figure 6 shows that most emplyees who are burnt out, their company does not provuide resources to seek and get help when avoiding burnout.
+    - Just a simple check in with the emplyees can help guide them to the right resources.
+                   
     ## **Conclusion:**
     There is significant burnout when it comes to remote working. Both employees, employers and the company as a whole need to be aware of this since it affects all parties.
     It has been concluded that the type of company is not the main reason for the burnout. It is a structural issue in the workplace.
