@@ -121,7 +121,7 @@ def ethical_standards_page():
 
 
 def insights_page():
-    st.title("📊 Remote Workers Burnout Dashboard")
+    st.title("📊 Remote Workers Burnout Dashboard 📊")
 
     # Display the HTML in Streamlit
     components.html(load_html(), height=750, scrolling=False)
@@ -158,10 +158,12 @@ def insights_page():
                    
     ## **Conclusion:**
     There is significant burnout when it comes to remote working. Both employees, employers and the company as a whole need to be aware of this since it affects all parties.
-    It has been concluded that the type of company is not the main reason for the burnout. It is a structural issue in the workplace.
-    Some key insights show that companies need to invest more in their complyee wellness programs for remote workers and provide resources to seek help.
+    It has been concluded that the type of company is not the main reason for the burnout. It must be a structural issue in the workplace.
+    Some key insights show that companies need to invest more in their complyee wellness programs and provide resources to seek help for remote workers.
     This could be weekly check ins, gym membership incentives, or even just a simple coffee break with the team.
-
+                
+    While remote working could benefit the employee and reduce the costs of the company, if it's not approached right, 
+    it can go wrong for the employee and the company as a whole.
     """)
 
 
