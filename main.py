@@ -76,6 +76,7 @@ def project_overview_page():
       """
   )
 
+
 def ethical_standards_page():
     st.title("📄 Project Ethical Standards 📄")
 
