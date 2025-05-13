@@ -4,7 +4,6 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 class EDARemoteWorkers():
-    DEBUG = True
     def __init__(self):
         # Import CSV
         self.df = pd.read_csv('data/survey.csv')
@@ -12,9 +11,25 @@ class EDARemoteWorkers():
         self.drop_unused_columns()
         self.handle_nulls()
         self.check_unique()
-        if self.DEBUG:
-            self.summary_statistics()
-            # self.plot_target_values()
+        self.summary_statistics()
+
+    def drop_unused_columns(self):
+        """ Cols that provide no value """
+        cols_to_drop = ["comments","Timestamp","state"]
+        self.df_clean = self.df_clean.drop(columns=cols_to_drop)
+
+    def handle_nulls(self):
+        """
+        Check and handle nulls
+        - Only one row with null - can be dropped
+        """
+        self.df_clean.info()
+        print(self.df_clean.isnull().sum())
+
+        # Target - Have to ha nulls
+        self.df_clean = self.df_clean.dropna(subset=["self_employed"])
+        self.df_clean["work_interfere"] = self.df_clean["work_interfere"].fillna("X")
+        print(self.df_clean.isnull().sum())
     
     def check_unique(self):
         """ 
@@ -23,26 +38,6 @@ class EDARemoteWorkers():
         """
         for col in self.df_clean.columns:
             print(f"\n{col}: {self.df_clean[col].unique()}\n")
-    
-    def handle_nulls(self):
-        """
-        Check and handle nulls
-        - Only one row with null - can be dropped
-        """
-        if self.DEBUG:
-            self.df_clean.info()
-            print(self.df_clean.isnull().sum())
-
-        # Target - Have to ha nulls
-        self.df_clean = self.df_clean.dropna(subset=["self_employed"])
-        self.df_clean["work_interfere"] = self.df_clean["work_interfere"].fillna("X")
-        if self.DEBUG:
-            print(self.df_clean.isnull().sum())
-
-    def drop_unused_columns(self):
-        """ Cols that provide no value """
-        cols_to_drop = ["comments","Timestamp","state"]
-        self.df_clean = self.df_clean.drop(columns=cols_to_drop)
 
     def summary_statistics(self):
         """ Check numerical stats of every column """
