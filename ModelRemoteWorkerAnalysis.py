@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split, GridSearchCV
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.preprocessing import LabelEncoder
+
 from xgboost import XGBClassifier
 
 
@@ -57,14 +58,11 @@ class ModelRemoteWorkerAnalysis():
         """
         df = df.copy()
 
-        # Manually selected relevant features
-        important_features = [
-            "work_interfere", "family_history", "care_options", "benefits", "anonymity",
-            "coworkers", "phys_health_interview", "obs_consequence", "Country",
-            "mental_health_consequence"
-        ]
+        # Very similar to target column
+        df.drop(columns=['work_interfere'], inplace = True)
 
-        df = df[important_features]
+        # Drop unrelated columns
+        df.drop(columns=['mental_health_interview','phys_health_interview'], inplace = True)
 
         for col in df.select_dtypes(include='object'):
             if training:
@@ -85,12 +83,15 @@ class ModelRemoteWorkerAnalysis():
     def fit_model(self):
         """Train XGBoost using GridSearchCV and return the best model."""
         param_grid = {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [3, 5, 7],
-            'learning_rate': [0.05, 0.1],
-            'subsample': [0.8, 1.0],
-            'colsample_bytree': [0.8, 1.0]
+            'n_estimators': [50, 100, 150],         # More trees = more learning
+            'max_depth': [2, 3, 4, 5],                  # Controls tree complexity
+            'learning_rate': [0.01, 0.05, 0.1],      # Lower = better generalisation (but needs more trees)
+            'subsample': [0.8, 1.0],                 # Less than 1.0 = prevent overfitting
+            'colsample_bytree': [0.8, 1.0],          # Use fewer features per tree
+            'min_child_weight': [1, 5, 10],          # Larger = more conservative splits
+            'gamma': [0, 1],                         # 0 = allow more splits, higher = only if split improves accuracy
         }
+
 
         model = XGBClassifier(
             objective='binary:logistic',
@@ -98,14 +99,22 @@ class ModelRemoteWorkerAnalysis():
             random_state=42
         )
 
-        grid = GridSearchCV(
+        stratified_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+        grid = RandomizedSearchCV(
             estimator=model,
-            param_grid=param_grid,
-            cv=5,
-            verbose=0,
-            n_jobs=-1
+            param_distributions=param_grid,
+            n_iter=50,  # Try only 10 random combos
+            scoring='recall',
+            cv=stratified_cv,
+            verbose=1,
+            n_jobs=-1,
+            random_state=42
         )
 
+        # F1 micro
+        # 0.79
+        # 0.74
         grid.fit(self.X_train_fe, self.y_train)
         print("✅ Best XGBoost Params:", grid.best_params_)
         return grid.best_estimator_
@@ -115,10 +124,10 @@ class ModelRemoteWorkerAnalysis():
 
         # Predict probabilities and convert to 0/1 using a 0.45 threshold
         y_train_probs = self.treeclf.predict_proba(self.X_train_fe)[:, 1]
-        y_train_pred = (y_train_probs >= 0.45).astype(int)
+        y_train_pred = (y_train_probs >= 0.401).astype(int)
 
         y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
-        y_test_pred = (y_test_probs >= 0.45).astype(int)
+        y_test_pred = (y_test_probs >= 0.401).astype(int)
 
         # Show metrics
         print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
@@ -140,13 +149,14 @@ class ModelRemoteWorkerAnalysis():
         features = self.X_train_fe.columns
         sorted_idx = np.argsort(importances)[::-1]
 
-        for idx in sorted_idx[:10]:
+        for idx in sorted_idx[:15]:
             print(f"{features[idx]}: {importances[idx]:.4f}")
 
     def manual_check(self, y_test_pred):
         """Print the first 10 actual vs. predicted results for manual inspection."""
         df_final = pd.DataFrame({'Actual': self.y_test, 'Predicted': y_test_pred})
         print(df_final.head(10))
+        print("Dataframe length:" , len(df_final))
 
     def predict_from_model(self, input_df=None):
         """
@@ -156,6 +166,10 @@ class ModelRemoteWorkerAnalysis():
         if input_df is None:
             # Example row
             input_df = pd.DataFrame({
+                "Age": 25,
+                "Gender": "Male",
+
+
                 'work_interfere': ['Sometimes'],
                 'family_history': ['Yes'],
                 'care_options': ['No'],
@@ -180,4 +194,4 @@ class ModelRemoteWorkerAnalysis():
 
 
 if __name__ == "__main__":
-    ModelRemoteWorkerAnalysis().predict_from_model()
+    ModelRemoteWorkerAnalysis()
