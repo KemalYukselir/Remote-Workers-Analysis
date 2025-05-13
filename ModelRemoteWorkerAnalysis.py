@@ -226,8 +226,4 @@ class ModelRemoteWorkerAnalysis():
     def save_model(self):
         # Save the model to a file
         with open("data/xgb_model.pkl", "wb") as f:
-            pickle.dump(self.treeclf, f)
-
-
-if __name__ == "__main__":
-    ModelRemoteWorkerAnalysis().predict_from_model()
+            pickle.dump(self, f)
