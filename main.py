@@ -175,6 +175,56 @@ def model_page():
 
     st.subheader("Enter Your Information")
 
+    family_history = st.selectbox("Do you have a family history of mental health issues?", [
+        "Yes", "No"
+    ])
+
+    obs_consequence = st.selectbox("Have you seen negative consequences for coworkers with burnout?", [
+        "Yes", "No"
+    ])
+
+    gender = st.selectbox("Gender", ["Male", "Female"])
+
+    benefits = st.selectbox("Does your employer offer mental health benefits?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    care_options = st.selectbox("Do you know what mental health care options your employer provides?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    coworkers = st.selectbox("Would you discuss burnout with coworkers?", [
+        "Yes", "No", "Some of them"
+    ])
+
+    wellness_program = st.selectbox("Does your employer have a wellness program?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    seek_help = st.selectbox("Would you seek help if you felt burnout?", [
+        "Yes", "No", "Maybe"
+    ])
+
+    no_employees = st.selectbox("How many employees does your company have?", [
+        "1-5", "6-25", "26-100", "101-500", "More than 500"
+    ])
+
+    mental_health_consequence = st.selectbox("Do you think disclosing burnout could have negative consequences?", [
+        "Yes", "No", "Maybe"
+    ])
+
+    mental_vs_physical = st.selectbox("Do you think mental health is as important as physical health?", [
+        "Yes", "No", "Don't know"
+    ])
+
+    supervisor = st.selectbox("Would you discuss burnout with your supervisor?", [
+        "Yes", "No", "Some of them"
+    ])
+
+    anonymity = st.selectbox("Is your anonymity protected when using support services?", [
+        "Yes", "No", "Don't know"
+    ])
+
     country = st.selectbox("Country", [
         'United States', 'France', 'United Kingdom', 'Canada', 'Poland', 'Australia',
         'Germany', 'Russia', 'Costa Rica', 'Austria', 'Mexico', 'South Africa',
@@ -183,62 +233,28 @@ def model_page():
         'Bulgaria', 'Croatia', 'Bahamas, The', 'Greece', 'China'
     ])
 
-    work_interfere = st.selectbox("How often does burnout interfere with your work?", [
-        "Never", "Rarely", "Sometimes", "Often", "N/A"
-    ])
-
-    family_history = st.selectbox("Do you have a family history of mental health issues?", [
-        "Yes", "No"
-    ])
-
-    care_options = st.selectbox("Do you know what mental health care options your employer provides?", [
-        "Yes", "No", "Don't know"
-    ])
-
-    benefits = st.selectbox("Does your employer offer mental health benefits?", [
-        "Yes", "No", "Don't know"
-    ])
-
-    anonymity = st.selectbox("Is your anonymity protected when using support services?", [
-        "Yes", "No", "Don't know"
-    ])
-
-    coworkers = st.selectbox("Would you discuss burnout with coworkers?", [
-        "Yes", "No", "Some of them"
-    ])
-
-    phys_health_interview = st.selectbox("Would you mention physical health issues in an interview?", [
-        "Yes", "No", "Maybe"
-    ])
-
-    obs_consequence = st.selectbox("Have you seen negative consequences for coworkers with burnout?", [
-        "Yes", "No"
-    ])
-
-    mental_health_consequence = st.selectbox("Do you think disclosing burnout could have negative consequences?", [
-        "Yes", "No", "Maybe"
-    ])
+    age = st.number_input("Age", min_value=18, max_value=100, value=25, step=1)
 
     # Construct input DataFrame
     input_dict = {
+        'family_history': [family_history],
+        'obs_consequence': [obs_consequence],
+        "Gender": [gender],
+        'benefits': [benefits],
+        'care_options': [care_options],
+        'coworkers': [coworkers],
+        'wellness_program': [wellness_program],
+        'seek_help': [seek_help],
+        'no_employees': [no_employees],
+        'mental_health_consequence': [mental_health_consequence],
+        'mental_vs_physical': [mental_vs_physical],
+        'supervisor': [supervisor],
+        'anonymity': [anonymity],
         "Country": [country],
-        "work_interfere": [work_interfere],
-        "family_history": [family_history],
-        "care_options": [care_options],
-        "benefits": [benefits],
-        "anonymity": [anonymity],
-        "coworkers": [coworkers],
-        "phys_health_interview": [phys_health_interview],
-        "obs_consequence": [obs_consequence],
-        "mental_health_consequence": [mental_health_consequence]
+        "Age": [age],
     }
 
     input_df = pd.DataFrame(input_dict)
-
-    # Load your pre-trained model and encoder (optional)
-    # model = joblib.load("your_model.pkl")
-    # encoder = joblib.load("your_encoder.pkl")
-    # input_encoded = encoder.transform(input_df)
 
     if st.button("Predict Burnout Support Seeking"):
         prediction = model.predict_from_model(input_df)
