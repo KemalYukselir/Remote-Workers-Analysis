@@ -113,7 +113,7 @@ class ModelRemoteWorkerAnalysis():
     def evaluate_model(self):
         """Evaluate model using accuracy, classification report, and confusion matrix."""
 
-        # Predict probabilities and convert to 0/1 using a 0.6 threshold
+        # Predict probabilities and convert to 0/1 using a 0.45 threshold
         y_train_probs = self.treeclf.predict_proba(self.X_train_fe)[:, 1]
         y_train_pred = (y_train_probs >= 0.45).astype(int)
 
