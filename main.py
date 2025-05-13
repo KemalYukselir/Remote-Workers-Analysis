@@ -3,13 +3,15 @@ import streamlit as st
 st.set_page_config(layout="wide")
 import numpy as np
 import pandas as pd
-import joblib 
-from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
+import pickle
 import streamlit.components.v1 as components
 
 @st.cache_resource
 def load_model():
-    return ModelRemoteWorkerAnalysis()
+    # Load model
+    with open("data/xgb_model.pkl", "rb") as f:
+        model = pickle.load(f)
+        return model
 
 @st.cache_resource
 # Read the local HTML file
