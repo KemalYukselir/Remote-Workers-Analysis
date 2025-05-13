@@ -14,6 +14,7 @@ class EDARemoteWorkers():
         self.map_age_values()
         self.check_unique()
         self.summary_statistics()
+        self.save_dataframe()
 
     def drop_unused_columns(self):
         """ Cols that provide no value """
@@ -129,9 +130,10 @@ class EDARemoteWorkers():
     def get_dataframe(self):
         return self.df_clean
     
-    def save_dataframe(self, filename):
+    def save_dataframe(self):
         """ Save the dataframe to a CSV file """
-        """ Save only remote workers"""
+        """ Save only remote workers """
+        filename = "data/remote_workers_clean.csv"
         self.df_clean = self.df_clean[self.df_clean['remote_work'] == 'Yes']
         self.df_clean.to_csv(filename, index=False)
         print(f"Dataframe saved to {filename}")
