@@ -10,6 +10,7 @@ class EDARemoteWorkers():
         self.df_clean = self.df.copy()
         self.drop_unused_columns()
         self.handle_nulls()
+        self.map_gender_values()
         self.check_unique()
         self.summary_statistics()
 
@@ -30,6 +31,52 @@ class EDARemoteWorkers():
         self.df_clean = self.df_clean.dropna(subset=["self_employed"])
         self.df_clean["work_interfere"] = self.df_clean["work_interfere"].fillna("X")
         print(self.df_clean.isnull().sum())
+    
+    def map_gender_values(self):
+        """
+        Check for inconsistent values in the dataset.
+        """
+        # Define gender groups
+        male_list = [
+            'male', 'Male', 'M', 'm', 'Cis Male', 'Male (CIS)', 'cis male', 'Male ', 'Man', 'Cis Man',
+            'Mal', 'Malr', 'maile', 'Make', 'msle', 'Mail', 'ostensibly male, unsure what that really means'
+        ]
+
+        female_list = [
+            'female', 'Female', 'F', 'f', 'Cis Female', 'Woman', 'woman', 'Femake', 'Female ', 'Female (cis)',
+            'femail', 'cis-female/femme'
+        ]
+
+        nonbinary_list = [
+            'Trans-female', 'Trans woman', 'Agender', 'Androgyne', 'Genderqueer', 'non-binary',
+            'queer', 'fluid', 'queer/she/they', 'Enby', 'Guy (-ish) ^_^', 'something kinda male?',
+            'male leaning androgynous'
+        ]
+
+        unknown_list = [
+            'Nah', 'All', 'A little about you', 'p'
+        ]
+
+        # Function to clean gender values
+        def clean_gender(gender):
+            if pd.isna(gender):
+                return 'Other/Unspecified'
+
+            gender = gender.strip()
+
+            if gender in male_list:
+                return 'Male'
+            elif gender in female_list:
+                return 'Female'
+            elif gender in nonbinary_list:
+                return 'Non-binary'
+            elif gender in unknown_list:
+                return 'Other/Unspecified'
+            else:
+                return 'Other/Unspecified'
+
+        # Apply the function to your dataset
+        self.df_clean['Gender'] = self.df_clean['Gender'].apply(clean_gender)
     
     def check_unique(self):
         """ 
