@@ -11,6 +11,7 @@ class EDARemoteWorkers():
         self.drop_unused_columns()
         self.handle_nulls()
         self.map_gender_values()
+        self.map_age_values()
         self.check_unique()
         self.summary_statistics()
 
@@ -34,7 +35,7 @@ class EDARemoteWorkers():
     
     def map_gender_values(self):
         """
-        Check for inconsistent values in the dataset.
+        Check for inconsistent values in the gender coloumn.
         """
         # Define gender groups
         male_list = [
@@ -78,6 +79,38 @@ class EDARemoteWorkers():
         # Apply the function to your dataset
         self.df_clean['Gender'] = self.df_clean['Gender'].apply(clean_gender)
     
+    def map_age_values(self):
+        """
+        Check for inconsistent values in the age coloumn.
+        """
+        # Define age groups
+        age_groups = {
+            '18-24': [18, 24],
+            '25-34': [25, 34],
+            '35-44': [35, 44],
+            '45-54': [45, 54],
+            '55-64': [55, 64],
+            '65+': [65, 100]
+        }
+
+        # Function to clean age values
+        def clean_age(age):
+            # Turn negtives to positives
+            age = abs(int(age))
+            
+            for group, (min_age, max_age) in age_groups.items():
+                if min_age <= age <= max_age:
+                    return group
+
+        # Apply the function to your dataset
+        print(self.df_clean['Age'].value_counts())
+        self.df_clean['Age'] = self.df_clean['Age'].apply(clean_age)
+
+        # Drop None Age cols
+        self.df_clean = self.df_clean[self.df_clean['Age'].notnull()]
+
+
+
     def check_unique(self):
         """ 
         Print all unique values in each column of the dataset.
