@@ -14,7 +14,7 @@ class ModelRemoteWorkerAnalysis():
         self.encoders = {}
 
         # Load the dataset
-        self.df_model = pd.read_csv('data/remote_workers.csv')
+        self.df_model = pd.read_csv('data/remote_workers_clean.csv')
 
         # Encode target column ('Yes' -> 1, 'No' -> 0)
         self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0})
@@ -115,10 +115,10 @@ class ModelRemoteWorkerAnalysis():
 
         # Predict probabilities and convert to 0/1 using a 0.6 threshold
         y_train_probs = self.treeclf.predict_proba(self.X_train_fe)[:, 1]
-        y_train_pred = (y_train_probs >= 0.6).astype(int)
+        y_train_pred = (y_train_probs >= 0.45).astype(int)
 
         y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
-        y_test_pred = (y_test_probs >= 0.6).astype(int)
+        y_test_pred = (y_test_probs >= 0.45).astype(int)
 
         # Show metrics
         print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
