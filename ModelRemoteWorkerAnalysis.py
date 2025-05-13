@@ -3,8 +3,8 @@ import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split, GridSearchCV
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.preprocessing import LabelEncoder
-
 from xgboost import XGBClassifier
+import pickle
 
 
 class ModelRemoteWorkerAnalysis():
@@ -36,6 +36,9 @@ class ModelRemoteWorkerAnalysis():
         # Evaluate the model
         self.evaluate_model()
 
+        # Save the model to pickle
+        self.save_model()
+
     def split_train_test(self):
         """Split the dataset into training and test sets (80/20)."""
         feature_cols = list(self.df_model.columns)
@@ -59,10 +62,37 @@ class ModelRemoteWorkerAnalysis():
         df = df.copy()
 
         # Very similar to target column
-        df.drop(columns=['work_interfere'], inplace = True)
+        try:
+            df.drop(columns=['work_interfere'], inplace = True)
+        except:
+            pass
 
         # Drop unrelated columns
-        df.drop(columns=['mental_health_interview','phys_health_interview'], inplace = True)
+        try:
+            df.drop(columns=['mental_health_interview','phys_health_interview'], inplace = True)
+        except:
+            pass
+
+        # Important feautures
+        important_features = [
+            "family_history",
+            "obs_consequence",
+            "Gender",
+            "benefits",
+            "care_options",
+            "coworkers",
+            "wellness_program",
+            "seek_help",
+            "no_employees",
+            "mental_health_consequence",
+            "mental_vs_physical",
+            "supervisor",
+            "anonymity",
+            "Country",
+            "Age"
+        ]
+
+        df = df[important_features]
 
         for col in df.select_dtypes(include='object'):
             if training:
@@ -166,20 +196,21 @@ class ModelRemoteWorkerAnalysis():
         if input_df is None:
             # Example row
             input_df = pd.DataFrame({
-                "Age": 25,
-                "Gender": "Male",
-
-
-                'work_interfere': ['Sometimes'],
-                'family_history': ['Yes'],
-                'care_options': ['No'],
-                'benefits': ['No'],
-                'anonymity': ['Yes'],
-                'coworkers': ['Yes'],
-                'phys_health_interview': ['Yes'],
+                'family_history': ['No'],
                 'obs_consequence': ['Yes'],
-                'Country': ['United States'],
-                'mental_health_consequence': ['Yes']
+                "Gender": ["Male"],
+                'benefits': ['No'],
+                'care_options': ['No'],
+                'coworkers': ['Yes'],
+                'wellness_program': ['No'],
+                'seek_help': ['No'],
+                'no_employees': ['1-5'],
+                'mental_health_consequence': ['Yes'],
+                'mental_vs_physical': ['Yes'],
+                'supervisor': ['No'],
+                'anonymity': ['Yes'],
+                "Country": ["United States"],
+                "Age": [25],
             })
 
         # Preprocess using stored encoders
@@ -191,7 +222,12 @@ class ModelRemoteWorkerAnalysis():
 
         print("Prediction:", prediction_pred)
         return prediction_pred
+    
+    def save_model(self):
+        # Save the model to a file
+        with open("data/xgb_model.pkl", "wb") as f:
+            pickle.dump(self.treeclf, f)
 
 
 if __name__ == "__main__":
-    ModelRemoteWorkerAnalysis()
+    ModelRemoteWorkerAnalysis().predict_from_model()
