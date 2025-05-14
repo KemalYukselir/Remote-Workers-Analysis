@@ -2,6 +2,8 @@
 from matplotlib import pyplot as plt
 import seaborn as sns 
 import pandas as pd # Data manipulation
+from wordcloud import WordCloud # Create word clouds
+
 
 # Helper tools
 from collections import Counter # Counting things
@@ -72,7 +74,13 @@ class NLPMentalHealth:
 
         return words_dictionary
 
-
+    def world_cloud(self):
+        # Create word cloud with white background
+        wc = WordCloud(width=800, height=400, max_words=50, background_color="white").generate_from_frequencies(self.words_dictionary)
+        plt.figure(figsize=(9,7))
+        plt.imshow(wc, interpolation="bilinear")
+        plt.axis("off")
+        plt.show()
 
 
 if __name__ == "__main__":
