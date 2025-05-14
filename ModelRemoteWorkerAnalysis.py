@@ -5,20 +5,23 @@ from sklearn.metrics import confusion_matrix, accuracy_score, classification_rep
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 import pickle
+import shap
 
 
 class ModelRemoteWorkerAnalysis():
     DEBUG = True
 
     def __init__(self):
-        # Dictionary to store encoders for categorical columns
-        self.encoders = {}
-
         # Load the dataset
         self.df_model = pd.read_csv('data/remote_workers_clean.csv')
 
+        self.label_encoders = {}
+
+        # Format for model
+        self.format_Dataframe()
+
         # Encode target column ('Yes' -> 1, 'No' -> 0)
-        self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0})
+        self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0, 1:1, 0:0})
 
         # Train-test split
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_train_test()
@@ -26,18 +29,11 @@ class ModelRemoteWorkerAnalysis():
         # Print balance of target values
         self.check_target_balance()
 
-        # Feature engineering + encoding (fit encoders on training set only)
-        self.X_train_fe = self.feature_engineering(self.X_train, training=True)
-        self.X_test_fe = self.feature_engineering(self.X_test, training=False)
-
         # Train the XGBoost model using grid search
         self.treeclf = self.fit_model()
 
         # Evaluate the model
         self.evaluate_model()
-
-        # Save the model to pickle
-        self.save_model()
 
     def split_train_test(self):
         """Split the dataset into training and test sets (80/20)."""
@@ -53,62 +49,61 @@ class ModelRemoteWorkerAnalysis():
         """Print the percentage of each class in the target column."""
         print(self.df_model['treatment'].value_counts(normalize=True))
 
-    def feature_engineering(self, df, training=True):
-        """
-        Select important features and apply consistent label encoding.
-        During training, encoders are fit and stored.
-        During prediction, the same encoders are reused.
-        """
-        df = df.copy()
-
-        # Very similar to target column
-        try:
-            df.drop(columns=['work_interfere'], inplace = True)
-        except:
-            pass
-
-        # Drop unrelated columns
-        try:
-            df.drop(columns=['mental_health_interview','phys_health_interview'], inplace = True)
-        except:
-            pass
-
-        # Important feautures
-        important_features = [
-            "family_history",
-            "obs_consequence",
-            "Gender",
-            "benefits",
-            "care_options",
-            "coworkers",
-            "wellness_program",
-            "seek_help",
-            "no_employees",
-            "mental_health_consequence",
-            "mental_vs_physical",
-            "supervisor",
-            "anonymity",
-            "Country",
-            "Age"
+    def format_Dataframe(self, predict_df=None):
+        drop_cols = [
+            'mental_health_interview', 'phys_health_interview', 'tech_company', "self_employed",
+            'Country', 'Gender', 'Age', "remote_work", "phys_health_consequence"
         ]
 
-        df = df[important_features]
+        if predict_df is None:
+            # Training mode
+            self.df_model.drop(columns=drop_cols, errors='ignore', inplace=True)
 
-        for col in df.select_dtypes(include='object'):
-            if training:
-                # Fit encoder on training data
+            if 'work_interfere' in self.df_model.columns:
+                self.df_model['work_interfere'] = self.df_model['work_interfere'].replace({
+                    'Often': 'Yes',
+                    'Sometimes': 'Yes',
+                    'Rarely': 'No',
+                    'Never': 'No',
+                    'X': 'No'
+                })
+
+
+            categorical_cols = self.df_model.select_dtypes(include='object').columns
+            for col in categorical_cols:
                 le = LabelEncoder()
-                df[col] = le.fit_transform(df[col].astype(str))
-                self.encoders[col] = le  # Store the encoder
-            else:
-                # Reuse saved encoder for prediction
-                le = self.encoders.get(col)
-                if le:
-                    # Safely handle unseen values by assigning -1
-                    df[col] = df[col].apply(lambda x: le.transform([x])[0] if x in le.classes_ else -1)
+                self.df_model[col] = le.fit_transform(self.df_model[col])
+                self.label_encoders[col] = le  # Store encoder
+
+        else:
+            # Prediction mode
+            predict_df.drop(columns=drop_cols, errors='ignore', inplace=True)
+
+            if 'work_interfere' in self.df_model.columns:
+                self.df_model['work_interfere'] = self.df_model['work_interfere'].replace({
+                    'Often': 'Yes',
+                    'Sometimes': 'Yes',
+                    'Rarely': 'No',
+                    'Never': 'No',
+                    'X': 'No'
+                })
+
+            for col in predict_df.select_dtypes(include='object').columns:
+                if col in self.label_encoders:
+                    le = self.label_encoders[col]
+                    try:
+                        predict_df[col] = le.transform(predict_df[col])
+                    except ValueError:
+                        # Handle unseen categories (map to -1 or most common value)
+                        predict_df[col] = predict_df[col].apply(
+                            lambda x: le.transform([x])[0] if x in le.classes_ else -1
+                        )
                 else:
-                    raise ValueError(f"No encoder found for column: {col}")
-        return df
+                    # Column wasn't seen during training — fill with 0 or remove
+                    predict_df[col] = 0
+
+            return predict_df
+       
 
     def fit_model(self):
         """Train XGBoost using GridSearchCV and return the best model."""
@@ -122,30 +117,26 @@ class ModelRemoteWorkerAnalysis():
             'gamma': [0, 1],                         # 0 = allow more splits, higher = only if split improves accuracy
         }
 
-
         model = XGBClassifier(
             objective='binary:logistic',
             eval_metric='mlogloss',
             random_state=42
         )
 
-        stratified_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        stratified_cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
 
         grid = RandomizedSearchCV(
             estimator=model,
             param_distributions=param_grid,
-            n_iter=50,  # Try only 10 random combos
-            scoring='recall',
+            n_iter=50,  # Try only 50 random combos
+            # scoring='recall_micro',
             cv=stratified_cv,
             verbose=1,
             n_jobs=-1,
             random_state=42
         )
 
-        # F1 micro
-        # 0.79
-        # 0.74
-        grid.fit(self.X_train_fe, self.y_train)
+        grid.fit(self.X_train, self.y_train)
         print("✅ Best XGBoost Params:", grid.best_params_)
         return grid.best_estimator_
 
@@ -153,15 +144,16 @@ class ModelRemoteWorkerAnalysis():
         """Evaluate model using accuracy, classification report, and confusion matrix."""
 
         # Predict probabilities and convert to 0/1 using a 0.45 threshold
-        y_train_probs = self.treeclf.predict_proba(self.X_train_fe)[:, 1]
-        y_train_pred = (y_train_probs >= 0.401).astype(int)
+        y_train_probs = self.treeclf.predict_proba(self.X_train)[:, 1]
+        y_train_pred = (y_train_probs >= 0.52).astype(int)
 
-        y_test_probs = self.treeclf.predict_proba(self.X_test_fe)[:, 1]
-        y_test_pred = (y_test_probs >= 0.401).astype(int)
+        y_test_probs = self.treeclf.predict_proba(self.X_test)[:, 1]
+        y_test_pred = (y_test_probs >= 0.52).astype(int)
 
         # Show metrics
         print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
         print(f"🧾 Testing Accuracy:  {accuracy_score(self.y_test, y_test_pred):.4f}")
+
         print("\n📊 Classification Report:")
         print(classification_report(self.y_test, y_test_pred))
         print("\n📉 Confusion Matrix:")
@@ -173,10 +165,11 @@ class ModelRemoteWorkerAnalysis():
         print("\nMost important features:\n")
         self.show_feature_importance()
 
+
     def show_feature_importance(self):
         """Print top 10 features based on importance from XGBoost."""
         importances = self.treeclf.feature_importances_
-        features = self.X_train_fe.columns
+        features = self.X_train.columns
         sorted_idx = np.argsort(importances)[::-1]
 
         for idx in sorted_idx[:15]:
@@ -190,40 +183,44 @@ class ModelRemoteWorkerAnalysis():
 
     def predict_from_model(self, input_df=None):
         """
-        Accepts a DataFrame of one or more rows and returns binary predictions.
-        Uses the saved encoders to preprocess input before prediction.
+        Run a prediction on a predefined example input.
+        Returns:
+            int: Predicted class (0 = No treatment, 1 = Needs treatment)
         """
         if input_df is None:
-            # Example row
             input_df = pd.DataFrame({
-                'family_history': ['No'],
-                'obs_consequence': ['Yes'],
-                "Gender": ["Male"],
-                'benefits': ['No'],
-                'care_options': ['No'],
-                'coworkers': ['Yes'],
-                'wellness_program': ['No'],
-                'seek_help': ['No'],
-                'no_employees': ['1-5'],
-                'mental_health_consequence': ['Yes'],
-                'mental_vs_physical': ['Yes'],
-                'supervisor': ['No'],
-                'anonymity': ['Yes'],
-                "Country": ["United States"],
-                "Age": [25],
+                'work_interfere': ['X'], # If you have a mental health condition, could it pontentially interfere with your work?
+                'family_history': ['Yes'],  # Do you have a family history of mental illness?
+                'obs_consequence': ['No'],  # Observed consequences for coworkers?
+                'benefits': ['Yes'],  # Employer provides mental health benefits?
+                'care_options': ['Yes'],  # Aware of care options?
+                'coworkers': ['Yes'],  # Talk to coworkers about mental health?
+                'wellness_program': ['Yes'],  # Employer discussed mental health?
+                'seek_help': ['Yes'],  # Resources to seek help?
+                'no_employees': ['100-500'],  # Company size
+                'mental_health_consequence': ['Yes'],  # Negative consequence of disclosure?
+                'mental_vs_physical': ['Yes'],  # Mental vs physical health seriousness
+                'supervisor': ['Yes'],  # Talk to supervisor?
+                'anonymity': ['Yes'],  # Is anonymity protected?
+                'leave': ['Very easy']
             })
 
-        # Preprocess using stored encoders
-        input_fe = self.feature_engineering(input_df, training=False)
+        processed = self.format_Dataframe(input_df)
+
+        # Align the column order with training data
+        processed = processed[self.X_train.columns]
 
         # Predict
-        prediction_proba = self.treeclf.predict_proba(input_fe)[:, 1]
-        prediction_pred = (prediction_proba >= 0.6).astype(int)
+        threshold=0.52
+        probs = self.treeclf.predict_proba(processed)[:, 1]
+        pred = int(probs[0] >= threshold)
 
-        print("Prediction:", prediction_pred)
-        return prediction_pred
-    
-    def save_model(self):
-        # Save the model to a file
-        with open("data/xgb_model.pkl", "wb") as f:
-            pickle.dump(self, f)
+        print(f"\n🧠 Prediction: {pred} (1 = Needs treatment, 0 = Doesn’t)")
+        print(f"🔍 Probability: {probs[0]:.2}")
+
+        return pred
+
+
+if __name__ == "__main__":
+    model = ModelRemoteWorkerAnalysis()
+    model.predict_from_model()
