@@ -175,68 +175,69 @@ def model_page():
 
     st.subheader("Enter Your Information")
 
-    family_history = st.selectbox("Do you have a family history of mental health issues?", [
+    work_interfere = st.selectbox("If you have a mental health condition, could it potentially interfere with your work?", [
+        "Never", "Rarely", "Sometimes", "Often", "X"
+    ])
+
+    family_history = st.selectbox("Do you have a family history of mental illness?", [
         "Yes", "No"
     ])
 
-    obs_consequence = st.selectbox("Have you seen negative consequences for coworkers with burnout?", [
+    obs_consequence = st.selectbox("Have you heard of or observed negative consequences for coworkers with mental health conditions in your workplace?", [
         "Yes", "No"
     ])
 
+    # Note: gender is not part of your described dataset, but keeping it in case it's still relevant
     gender = st.selectbox("Gender", ["Male", "Female"])
 
-    benefits = st.selectbox("Does your employer offer mental health benefits?", [
+    benefits = st.selectbox("Does your employer provide mental health benefits?", [
         "Yes", "No", "Don't know"
     ])
 
-    care_options = st.selectbox("Do you know what mental health care options your employer provides?", [
+    care_options = st.selectbox("Do you know the options for mental health care your employer provides?", [
         "Yes", "No", "Don't know"
     ])
 
-    coworkers = st.selectbox("Would you discuss burnout with coworkers?", [
+    coworkers = st.selectbox("Would you be willing to discuss a mental health issue with your coworkers?", [
         "Yes", "No", "Some of them"
     ])
 
-    wellness_program = st.selectbox("Does your employer have a wellness program?", [
+    wellness_program = st.selectbox("Has your employer ever discussed mental health as part of an employee wellness program?", [
         "Yes", "No", "Don't know"
     ])
 
-    seek_help = st.selectbox("Would you seek help if you felt burnout?", [
+    seek_help = st.selectbox("Does your employer provide resources to learn more about mental health issues and how to seek help?", [
         "Yes", "No", "Maybe"
     ])
 
-    no_employees = st.selectbox("How many employees does your company have?", [
+    no_employees = st.selectbox("How many employees does your company or organization have?", [
         "1-5", "6-25", "26-100", "101-500", "More than 500"
     ])
 
-    mental_health_consequence = st.selectbox("Do you think disclosing burnout could have negative consequences?", [
+    mental_health_consequence = st.selectbox("Do you think that discussing a mental health issue with your employer would have negative consequences?", [
         "Yes", "No", "Maybe"
     ])
 
-    mental_vs_physical = st.selectbox("Do you think mental health is as important as physical health?", [
+    mental_vs_physical = st.selectbox("Do you feel that your employer takes mental health as seriously as physical health?", [
         "Yes", "No", "Don't know"
     ])
 
-    supervisor = st.selectbox("Would you discuss burnout with your supervisor?", [
+    supervisor = st.selectbox("Would you be willing to discuss a mental health issue with your direct supervisor(s)?", [
         "Yes", "No", "Some of them"
     ])
 
-    anonymity = st.selectbox("Is your anonymity protected when using support services?", [
+    anonymity = st.selectbox("Is your anonymity protected if you choose to take advantage of mental health or substance abuse treatment resources?", [
         "Yes", "No", "Don't know"
     ])
+    
+    leave = st.selectbox("How easy is it for you to take medical leave for a mental health condition?", [
+        "Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult"
+        ])
 
-    country = st.selectbox("Country", [
-        'United States', 'France', 'United Kingdom', 'Canada', 'Poland', 'Australia',
-        'Germany', 'Russia', 'Costa Rica', 'Austria', 'Mexico', 'South Africa',
-        'Ireland', 'Romania', 'Brazil', 'Uruguay', 'New Zealand', 'Netherlands',
-        'Finland', 'Bosnia and Herzegovina', 'Hungary', 'Singapore', 'Japan', 'India',
-        'Bulgaria', 'Croatia', 'Bahamas, The', 'Greece', 'China'
-    ])
-
-    age = st.number_input("Age", min_value=18, max_value=100, value=25, step=1)
 
     # Construct input DataFrame
     input_dict = {
+        'work_interfere': [work_interfere],
         'family_history': [family_history],
         'obs_consequence': [obs_consequence],
         "Gender": [gender],
@@ -250,8 +251,7 @@ def model_page():
         'mental_vs_physical': [mental_vs_physical],
         'supervisor': [supervisor],
         'anonymity': [anonymity],
-        "Country": [country],
-        "Age": [age],
+        'leave': [leave]
     }
 
     input_df = pd.DataFrame(input_dict)
@@ -259,7 +259,7 @@ def model_page():
     if st.button("Predict Burnout Support Seeking"):
         prediction = model.predict_from_model(input_df)
         print(prediction)
-        st.success(f"Predicted class: {'This person will likely feel burnout' if prediction[0] == 1 else 'This person will not feel burnout'}")
+        st.success(f"Predicted class: {'This person will likely feel burnout' if prediction == 1 else 'This person will not feel burnout'}")
 
 
 if page == "Project Overview":
