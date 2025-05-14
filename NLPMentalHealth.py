@@ -56,7 +56,8 @@ class NLPMentalHealth:
         stpwrd.extend(string.punctuation)
 
         # Add custom stop words
-        manual_stpwrd = ['–','','wa','ha','health','employer','would','get','remote','would','get']
+        manual_stpwrd = ['–','','wa','ha','mental','health','employer','would','get','remote','would','get',
+                         'might','know','thanks']
         stpwrd.extend(manual_stpwrd)
         
         lemma = [lemmatizer.lemmatize(x) for x in word_bank]
