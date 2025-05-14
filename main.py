@@ -135,7 +135,7 @@ def insights_page():
     - An alarming 52.703% of Remote workers reported feeling burnout.
                 
     **Figure 2:**
-    - Before we dive in further, I want to highlight to employers this problem affects them and the company as a whole. Not just the employee.
+    - Before we dive in further, I want to highlight to employers that this problem affects them and the company as a whole. Not just the employee.
     - We can see out of those who burnout, most of them feel that it "often" and "sometimes" affects the work they do.
     - Employers addressing this issue will not only help the employee but also the company as a whole.
                     
@@ -143,19 +143,24 @@ def insights_page():
     - Then I wanted to check if the type of company was the main reason for the burnout.
     - From the graphs, we can see that tech and non tech companies have nearly equal distribution of burnout. So we can rule out that the type of company is not the main reason for the burnout.
     - So it must be a company structural issue in the workplace.
-    
+                
     **Figure 4:**
-    - Figure 4 shows that on average, the less employees a comapny has, the more liekly they are to burnout.
-    - Could this indicate that smaller companies have more pressure on their employees?
-    - Or could it be that larger companies have more resources to help their employees?
-
+    - Figure 4 shows the 10 most common words of burntout remote workers used in the comments section.
+    - We can see that the word company is the most common word used.
+    - This further reinforces the idea that burntout must be a more of a company structural issue
+                
     **Figure 5:**
-    - Figure 5 shows that most employees who are burnt out, their company does not offer mental health as part of their employee wellness program.
-    - This shows that comapnies need to invest more in their employee wellness programs to avoid burnout.
-    - This could be weekly check ins, gym membership incentives, or even just a simple coffee break with the team.
-    
+    - Figure 5 shows that on average, the less employees a comapny has, the more liekly they are to burnout.
+    - Could this indicate that smaller companies have more pressure on their remote employees?
+    - Or could it be that larger companies have more resources to help their remote employees?
+
     **Figure 6:**
-    - Figure 6 shows that most emplyees who are burnt out, their company does not provuide resources to seek and get help when avoiding burnout.
+    - Figure 6 shows that most remote employees who are burnt out, their company does not offer mental health as part of their employee wellness program.
+    - This shows that companies should invest more in their employee wellness programs to avoid burnout.
+    - This could be weekly gym membership incentives, or even just a simple coffee break with the team.
+    
+    **Figure 7:**
+    - Figure 7 shows that most remote employees who are burnt out, their company does not provuide resources to seek and get help when avoiding burnout.
     - Just a simple check in with the emplyees can help guide them to the right resources.
                    
     ## **Conclusion:**
