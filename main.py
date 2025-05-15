@@ -199,9 +199,24 @@ def model_page():
 
     st.subheader("Enter Your Information")
 
-    work_interfere = st.selectbox("If you have a mental health condition, could it potentially interfere with your work?", [
-        "Never", "Rarely", "Sometimes", "Often", "X"
-    ])
+    any_condition = st.selectbox(
+        "Do you have any condition (e.g. ADHD, anxiety) that affects your focus or ability to work?",
+        ["Yes", "No"]
+    )
+
+    # work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
+    #         "Never", "Rarely", "Sometimes", "Often", "X"
+    # ])
+    
+    if any_condition == "Yes":
+        work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
+            "Never", "Rarely", "Sometimes", "Often", "X"
+        ])
+    else:
+        #Disable the input
+        work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
+            "X"
+        ], disabled=True)
 
     family_history = st.selectbox("Do you have a family history of mental illness?", [
         "Yes", "No"
@@ -210,9 +225,6 @@ def model_page():
     obs_consequence = st.selectbox("Have you heard of or observed negative consequences for coworkers with mental health conditions in your workplace?", [
         "Yes", "No"
     ])
-
-    # Note: gender is not part of your described dataset, but keeping it in case it's still relevant
-    gender = st.selectbox("Gender", ["Male", "Female"])
 
     benefits = st.selectbox("Does your employer provide mental health benefits?", [
         "Yes", "No", "Don't know"
@@ -264,7 +276,6 @@ def model_page():
         'work_interfere': [work_interfere],
         'family_history': [family_history],
         'obs_consequence': [obs_consequence],
-        "Gender": [gender],
         'benefits': [benefits],
         'care_options': [care_options],
         'coworkers': [coworkers],
@@ -282,8 +293,10 @@ def model_page():
 
     if st.button("Predict Burnout Support Seeking"):
         prediction = model.predict_from_model(input_df)
+        final_verdict = prediction[0]
         print(prediction)
-        st.success(f"Predicted class: {'This person will likely feel burnout' if prediction == 1 else 'This person will not feel burnout'}")
+        st.success(f"Predicted Burnout: {'This person will likely feel burnout' if final_verdict == 1 else 'This person will not feel burnout'}")
+
 
 
 if page == "Project Overview":
