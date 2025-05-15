@@ -15,15 +15,15 @@ class ModelRemoteWorkerAnalysis():
 
         self.label_encoders = {}
 
-        # Format for model
-        self.format_Dataframe()
-
-
         # for col in self.df_model.columns:
         #     print(f"\n{col}: {self.df_model[col].unique()}\n")
 
         # return
-        self.threshold = 0.6
+
+        # Format for model
+        self.format_Dataframe()
+
+        self.threshold = 0.47
 
         # Encode target column ('Yes' -> 1, 'No' -> 0)
         self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0, 1:1, 0:0})
@@ -56,8 +56,8 @@ class ModelRemoteWorkerAnalysis():
 
     def format_Dataframe(self, predict_df=None):
         drop_cols = [
-            'mental_health_interview', 'phys_health_interview', 'tech_company', "self_employed",
-            'Country', 'Gender', 'Age', "remote_work", "phys_health_consequence"
+            'mental_health_interview', 'phys_health_interview', "self_employed",
+            'Country', 'Gender', 'Age', "remote_work", "work_interfere", "family_history"
         ]
 
         if predict_df is None:
@@ -69,22 +69,22 @@ class ModelRemoteWorkerAnalysis():
 
         # Binary columns
         binary_mappings = {
-            'family_history': {'No': 0, 'Yes': 1},
-            'treatment': {'No': 0, 'Yes': 1},
-            'obs_consequence': {'No': 0, 'Yes': 1}
+            # 'family_history': {'No': 0, 'Yes': 1},
+            'obs_consequence': {'No': 0, 'Yes': 1},
+            'tech_company': {'No': 0, 'Yes': 1}
         }
 
         ordinal_mappings = {
-            'work_interfere': {'X': 0, 'Never': 0, 'Rarely': 0.3, 'Sometimes': 0.6, 'Often': 1.0},
+            # 'work_interfere': {'X': 0, 'Never': 0, 'Rarely': 0.3, 'Sometimes': 0.6, 'Often': 1.0},
             'no_employees': {
                 '1-5': 0, '6-25': 1, '26-100': 2,
                 '100-500': 3, '500-1000': 4, 'More than 1000': 5
             },
-            'benefits': {"Don't know": 0, 'No': 1, 'Yes': 2},
-            'care_options': {'Not sure': 0, 'No': 1, 'Yes': 2},
-            'wellness_program': {"Don't know": 0, 'No': 1, 'Yes': 2},
-            'seek_help': {"Don't know": 0, 'No': 1, 'Yes': 2},
-            'anonymity': {"Don't know": 0, 'No': 1, 'Yes': 2},
+            'benefits': {'No': 0, "Don't know": 1, 'Yes': 2},
+            'care_options': {'No': 0, 'Not sure': 1, 'Yes': 2},
+            'wellness_program': {'No': 0, "Don't know": 1, 'Yes': 2},
+            'seek_help': {'No': 0, "Don't know": 1, 'Yes': 2},
+            'anonymity': {'No': 0, "Don't know": 1, 'Yes': 2},
             'leave': {
                 "Don't know": 0, 'Very difficult': 1, 'Somewhat difficult': 2,
                 'Somewhat easy': 3, 'Very easy': 4
@@ -92,7 +92,8 @@ class ModelRemoteWorkerAnalysis():
             'mental_health_consequence': {'No': 0, 'Maybe': 1, 'Yes': 2},
             'coworkers': {'No': 0, 'Some of them': 1, 'Yes': 2},
             'supervisor': {'No': 0, 'Some of them': 1, 'Yes': 2},
-            'mental_vs_physical': {"Don't know": 0, 'No': 1, 'Yes': 2}
+            'mental_vs_physical': {'No': 0, "Don't know": 1, 'Yes': 2},
+            'phys_health_consequence': {'No': 0, 'Maybe': 1, 'Yes': 2}
         }
 
         # Apply binary encodings
@@ -129,13 +130,13 @@ class ModelRemoteWorkerAnalysis():
             random_state=42
         )
 
-        stratified_cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+        stratified_cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
         grid = RandomizedSearchCV(
             estimator=model,
             param_distributions=param_grid,
-            n_iter=50,  # Try only 50 random combos
-            scoring='accuracy',
+            n_iter=40,  # Try only 50 random combos
+            scoring='precision',
             cv=stratified_cv,
             verbose=1,
             n_jobs=-1,
@@ -195,8 +196,9 @@ class ModelRemoteWorkerAnalysis():
         """
         if input_df is None:
             input_df = pd.DataFrame({
-                'work_interfere': ['Rarely'], # If you have a mental health condition, could it pontentially interfere with your work?
-                'family_history': ['No'],  # Do you have a family history of mental illness?
+                # 'work_interfere': ['Rarely'], # If you have a mental health condition, could it pontentially interfere with your work?
+                # 'family_history': ['No'],  # Do you have a family history of mental illness?
+                'tech_company': ['Yes'],
                 'obs_consequence': ['No'],  # Observed consequences for coworkers?
                 'benefits': ['Yes'],  # Employer provides mental health benefits?
                 'care_options': ['Yes'],  # Aware of care options?
@@ -205,6 +207,7 @@ class ModelRemoteWorkerAnalysis():
                 'seek_help': ['No'],  # Resources to seek help?
                 'no_employees': ['100-500'],  # Company size
                 'mental_health_consequence': ['No'],  # Negative consequence of disclosure?
+                'phys_health_consequence': ['No'],
                 'mental_vs_physical': ['Yes'],  # Mental vs physical health seriousness
                 'supervisor': ['Yes'],  # Talk to supervisor?
                 'anonymity': ['Yes'],  # Is anonymity protected?
