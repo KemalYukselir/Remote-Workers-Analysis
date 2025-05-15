@@ -4,8 +4,6 @@ from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_t
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
-import pickle
-import shap
 
 
 class ModelRemoteWorkerAnalysis():
