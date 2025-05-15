@@ -177,8 +177,10 @@ def insights_page():
     - This could be weekly gym membership incentives, or even just a simple coffee break with the team.
     
     **Figure 7:**
-    - Figure 7 shows that most remote employees who are burnt out, their company does not provuide resources to seek and get help when avoiding burnout.
-    - Just a simple check in with the emplyees can help guide them to the right resources.
+    - Figure 7 is very interesting as it shows the opposite of what I ecpected.
+    - Out of those who are burnt out, most said yes to "employer provide mental health benefits?" and "Do you know the options for mental health?"
+    - This is very interesting as maybe the employees don't push themself to use the benefits.
+    - Companies can add in weekly check ins to see if the employees need extra help or to even open them up to using resources more.
                    
     ## **Conclusion:**
     There is significant burnout when it comes to remote working. Both employees, employers and the company as a whole need to be aware of this since it affects all parties.
@@ -199,26 +201,7 @@ def model_page():
 
     st.subheader("Enter Your Information")
 
-    any_condition = st.selectbox(
-        "Do you have any condition (e.g. ADHD, anxiety) that affects your focus or ability to work?",
-        ["Yes", "No"]
-    )
-
-    # work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
-    #         "Never", "Rarely", "Sometimes", "Often", "X"
-    # ])
-    
-    if any_condition == "Yes":
-        work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
-            "Never", "Rarely", "Sometimes", "Often", "X"
-        ])
-    else:
-        #Disable the input
-        work_interfere = st.selectbox("If you have any condition, could it potentially interfere with your work?", [
-            "X"
-        ], disabled=True)
-
-    family_history = st.selectbox("Do you have a family history of mental illness?", [
+    tech_company = st.selectbox("Do you work at a tech company?", [
         "Yes", "No"
     ])
 
@@ -231,7 +214,7 @@ def model_page():
     ])
 
     care_options = st.selectbox("Do you know the options for mental health care your employer provides?", [
-        "Yes", "No", "Don't know"
+        'Not sure', 'No', 'Yes'
     ])
 
     coworkers = st.selectbox("Would you be willing to discuss a mental health issue with your coworkers?", [
@@ -243,14 +226,18 @@ def model_page():
     ])
 
     seek_help = st.selectbox("Does your employer provide resources to learn more about mental health issues and how to seek help?", [
-        "Yes", "No", "Maybe"
+        "Don't know", "No", "Yes"
     ])
 
     no_employees = st.selectbox("How many employees does your company or organization have?", [
-        "1-5", "6-25", "26-100", "101-500", "More than 500"
+        "1-5", "6-25", "26-100", "100-500", "More than 1000"
     ])
 
     mental_health_consequence = st.selectbox("Do you think that discussing a mental health issue with your employer would have negative consequences?", [
+        "Yes", "No", "Maybe"
+    ])
+
+    phys_health_consequence = st.selectbox("Do you think that discussing a physical health issue with your employer would have negative consequences?", [
         "Yes", "No", "Maybe"
     ])
 
@@ -273,8 +260,7 @@ def model_page():
 
     # Construct input DataFrame
     input_dict = {
-        'work_interfere': [work_interfere],
-        'family_history': [family_history],
+        'tech_company': [tech_company],  
         'obs_consequence': [obs_consequence],
         'benefits': [benefits],
         'care_options': [care_options],
@@ -283,6 +269,7 @@ def model_page():
         'seek_help': [seek_help],
         'no_employees': [no_employees],
         'mental_health_consequence': [mental_health_consequence],
+        'phys_health_consequence' : [phys_health_consequence],
         'mental_vs_physical': [mental_vs_physical],
         'supervisor': [supervisor],
         'anonymity': [anonymity],
