@@ -36,46 +36,58 @@ st.sidebar.markdown("**Checkout my other project:**")
 st.sidebar.markdown("[Student Certify Rate](https://student-certify-rate.streamlit.app/)")
 
 def project_overview_page():
-  st.title("📘 Project Overview 📘")
+    # Set the title and image
+    st.title("🌍 **Remote Worker Burnout Analysis** 🌍")
 
-  st.markdown(
+    st.image("https://media.licdn.com/dms/image/v2/C4E12AQFULp9_xFcyLg/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1621418267262?e=2147483647&v=beta&t=OAsQn-62BIbtXd04IhvIjhDj3Z2Bm_D_rvZl99NwFKs", width=400)
+    
+    st.markdown(
+      
       """
-      # 🌍 **Remote Worker Analysis** 🌍
-      ## By **Kemal Yukselir**
+        ## By **Kemal Yukselir**
 
-      ### **Description:**
-      This project explores workplace survey data to understand what influences whether individuals seek support for burnout. 
-      It uses data analysis, decision tree modelling, and comment analysis to highlight how personal and workplace conditions relate to burnout support.
+        ## **Context:**
+        <img src="https://st.depositphotos.com/37378518/60435/v/450/depositphotos_604351950-stock-illustration-light-bulb-icon-isolated-white.jpg" width="100"/>
+        
+        > _"Going through Digital Futures training for 3 months has been a great learning experience.  
+        However, based on both my own experience and the experience of my peers, remote work has also been a significant challenge.  
+        This inspired me to explore the topic of burnout among remote workers."_
 
-      ### **References:**
-      - [OSMI Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey)
+        ### **Description:**
+        This project explores workplace survey data to understand what influences whether remote workers experience burnout.  
+        It uses data analysis, XGBoost modelling, and comment analysis to highlight how personal and workplace conditions relate to burnout risk and support.
 
-      ### **Modules Used:**
-      - **Pandas**  
-      - **NumPy**  
-      - **Scikit-learn**  
-      - **Xgboost**  
-      - **GridSearchCV**  
-      - **Streamlit**  
-      - **Matplotlib**  
-      - **Seaborn**  
-      - **Nltk**
 
-      ### **Project Highlights:**
-      With all ethical practices considered, this is the best model achieved after multiple iterations:
+        ### **References:**
+        - [OSMI Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey)
 
-      - 🧪 **Training Accuracy:** 0.8514
-      - 🧾 **Testing Accuracy:**  0.8649
+        ### **Modules Used:**
+        - **Pandas**  
+        - **NumPy**  
+        - **Scikit-learn**  
+        - **Xgboost**  
+        - **RandomizedSearchCV**  
+        - **Streamlit**  
+        - **Matplotlib**  
+        - **Seaborn**  
+        - **Nltk**
 
-      #### **📊 Classification Report:**
-      | Metric         | Class 0 | Class 1 | Accuracy | Macro Avg | Weighted Avg |
-      |----------------|---------|---------|----------|-----------|--------------|
-      | **Precision**  | 0.79    | 0.97    |          | 0.88      | 0.88         |
-      | **Recall**     | 0.97    | 0.77    |          | 0.87      | 0.86         |
-      | **F1-Score**   | 0.87    | 0.86    | 0.86     | 0.86      | 0.86         |
-      | **Support**    | 35      | 39      | 74       |           |              |
-      """
-  )
+        ### **Project Highlights:**
+        With all ethical practices considered, this is the best model achieved after multiple iterations:
+
+        - 🧪 **Training Accuracy:** 0.8151 🧪
+        - 🧾 **Testing Accuracy:**  0.7973 🧾
+
+        #### **📊 Classification Report:**
+        | Metric         | Class 0 | Class 1 | Accuracy | Macro Avg | Weighted Avg |
+        |----------------|---------|---------|----------|-----------|--------------|
+        | **Precision**  | 0.76    | 0.83    |          | 0.80      | 0.80         |
+        | **Recall**     | 0.83    | 0.77    |          | 0.80      | 0.80         |
+        | **F1-Score**   | 0.79    | 0.80    | 0.80     | 0.80      | 0.80         |
+        | **Support**    | 35      | 39      | 74       |           |              |
+      """,
+        unsafe_allow_html=True
+    )
 
 
 def ethical_standards_page():
@@ -173,6 +185,9 @@ def insights_page():
     it can go wrong for the employee and the company as a whole.
     """)
 
+
+def further_insights_page():
+    pass
 
 def model_page():
     st.title("🧠 Burnout Support Predictor")
@@ -272,5 +287,7 @@ elif page == "Ethical Standards":
     ethical_standards_page()
 elif page == "Insights":
     insights_page()
+# elif page == "Further Insights":
+#     further_insights_page()
 elif page == "Predictor":
     model_page()
