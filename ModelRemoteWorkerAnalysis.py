@@ -18,6 +18,13 @@ class ModelRemoteWorkerAnalysis():
         # Format for model
         self.format_Dataframe()
 
+
+        # for col in self.df_model.columns:
+        #     print(f"\n{col}: {self.df_model[col].unique()}\n")
+
+        # return
+        self.threshold = 0.6
+
         # Encode target column ('Yes' -> 1, 'No' -> 0)
         self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0, 1:1, 0:0})
 
@@ -54,54 +61,55 @@ class ModelRemoteWorkerAnalysis():
         ]
 
         if predict_df is None:
-            # Training mode
-            self.df_model.drop(columns=drop_cols, errors='ignore', inplace=True)
-
-            if 'work_interfere' in self.df_model.columns:
-                self.df_model['work_interfere'] = self.df_model['work_interfere'].replace({
-                    'Often': 'Yes',
-                    'Sometimes': 'Yes',
-                    'Rarely': 'No',
-                    'Never': 'No',
-                    'X': 'No'
-                })
-
-
-            categorical_cols = self.df_model.select_dtypes(include='object').columns
-            for col in categorical_cols:
-                le = LabelEncoder()
-                self.df_model[col] = le.fit_transform(self.df_model[col])
-                self.label_encoders[col] = le  # Store encoder
-
+            df = self.df_model
         else:
-            # Prediction mode
-            predict_df.drop(columns=drop_cols, errors='ignore', inplace=True)
+            df = predict_df
 
-            if 'work_interfere' in self.df_model.columns:
-                self.df_model['work_interfere'] = self.df_model['work_interfere'].replace({
-                    'Often': 'Yes',
-                    'Sometimes': 'Yes',
-                    'Rarely': 'No',
-                    'Never': 'No',
-                    'X': 'No'
-                })
+        df.drop(columns=drop_cols, errors='ignore', inplace=True)
 
-            for col in predict_df.select_dtypes(include='object').columns:
-                if col in self.label_encoders:
-                    le = self.label_encoders[col]
-                    try:
-                        predict_df[col] = le.transform(predict_df[col])
-                    except ValueError:
-                        # Handle unseen categories (map to -1 or most common value)
-                        predict_df[col] = predict_df[col].apply(
-                            lambda x: le.transform([x])[0] if x in le.classes_ else -1
-                        )
-                else:
-                    # Column wasn't seen during training — fill with 0 or remove
-                    predict_df[col] = 0
+        # Binary columns
+        binary_mappings = {
+            'family_history': {'No': 0, 'Yes': 1},
+            'treatment': {'No': 0, 'Yes': 1},
+            'obs_consequence': {'No': 0, 'Yes': 1}
+        }
 
-            return predict_df
-       
+        ordinal_mappings = {
+            'work_interfere': {'X': 0, 'Never': 0, 'Rarely': 0.3, 'Sometimes': 0.6, 'Often': 1.0},
+            'no_employees': {
+                '1-5': 0, '6-25': 1, '26-100': 2,
+                '100-500': 3, '500-1000': 4, 'More than 1000': 5
+            },
+            'benefits': {"Don't know": 0, 'No': 1, 'Yes': 2},
+            'care_options': {'Not sure': 0, 'No': 1, 'Yes': 2},
+            'wellness_program': {"Don't know": 0, 'No': 1, 'Yes': 2},
+            'seek_help': {"Don't know": 0, 'No': 1, 'Yes': 2},
+            'anonymity': {"Don't know": 0, 'No': 1, 'Yes': 2},
+            'leave': {
+                "Don't know": 0, 'Very difficult': 1, 'Somewhat difficult': 2,
+                'Somewhat easy': 3, 'Very easy': 4
+            },
+            'mental_health_consequence': {'No': 0, 'Maybe': 1, 'Yes': 2},
+            'coworkers': {'No': 0, 'Some of them': 1, 'Yes': 2},
+            'supervisor': {'No': 0, 'Some of them': 1, 'Yes': 2},
+            'mental_vs_physical': {"Don't know": 0, 'No': 1, 'Yes': 2}
+        }
+
+        # Apply binary encodings
+        for col, mapping in binary_mappings.items():
+            if col in df.columns:
+                df[col] = df[col].map(mapping)
+
+        # Apply ordinal encodings
+        for col, mapping in ordinal_mappings.items():
+            if col in df.columns:
+                df[col] = df[col].map(mapping)
+
+        # Assign back
+        if predict_df is None:
+            self.df_model = df
+        else:
+            return df
 
     def fit_model(self):
         """Train XGBoost using GridSearchCV and return the best model."""
@@ -127,7 +135,7 @@ class ModelRemoteWorkerAnalysis():
             estimator=model,
             param_distributions=param_grid,
             n_iter=50,  # Try only 50 random combos
-            # scoring='recall_micro',
+            scoring='accuracy',
             cv=stratified_cv,
             verbose=1,
             n_jobs=-1,
@@ -143,10 +151,10 @@ class ModelRemoteWorkerAnalysis():
 
         # Predict probabilities and convert to 0/1 using a 0.45 threshold
         y_train_probs = self.treeclf.predict_proba(self.X_train)[:, 1]
-        y_train_pred = (y_train_probs >= 0.52).astype(int)
+        y_train_pred = (y_train_probs >= self.threshold).astype(int)
 
         y_test_probs = self.treeclf.predict_proba(self.X_test)[:, 1]
-        y_test_pred = (y_test_probs >= 0.52).astype(int)
+        y_test_pred = (y_test_probs >= self.threshold).astype(int)
 
         # Show metrics
         print(f"\n🧪 Training Accuracy: {accuracy_score(self.y_train, y_train_pred):.4f}")
@@ -187,16 +195,16 @@ class ModelRemoteWorkerAnalysis():
         """
         if input_df is None:
             input_df = pd.DataFrame({
-                'work_interfere': ['X'], # If you have a mental health condition, could it pontentially interfere with your work?
-                'family_history': ['Yes'],  # Do you have a family history of mental illness?
+                'work_interfere': ['Rarely'], # If you have a mental health condition, could it pontentially interfere with your work?
+                'family_history': ['No'],  # Do you have a family history of mental illness?
                 'obs_consequence': ['No'],  # Observed consequences for coworkers?
                 'benefits': ['Yes'],  # Employer provides mental health benefits?
                 'care_options': ['Yes'],  # Aware of care options?
-                'coworkers': ['Yes'],  # Talk to coworkers about mental health?
+                'coworkers': ['No'],  # Talk to coworkers about mental health?
                 'wellness_program': ['Yes'],  # Employer discussed mental health?
-                'seek_help': ['Yes'],  # Resources to seek help?
+                'seek_help': ['No'],  # Resources to seek help?
                 'no_employees': ['100-500'],  # Company size
-                'mental_health_consequence': ['Yes'],  # Negative consequence of disclosure?
+                'mental_health_consequence': ['No'],  # Negative consequence of disclosure?
                 'mental_vs_physical': ['Yes'],  # Mental vs physical health seriousness
                 'supervisor': ['Yes'],  # Talk to supervisor?
                 'anonymity': ['Yes'],  # Is anonymity protected?
@@ -205,18 +213,52 @@ class ModelRemoteWorkerAnalysis():
 
         processed = self.format_Dataframe(input_df)
 
+        print(processed.head(1))
+
         # Align the column order with training data
         processed = processed[self.X_train.columns]
 
         # Predict
-        threshold=0.52
         probs = self.treeclf.predict_proba(processed)[:, 1]
-        pred = int(probs[0] >= threshold)
+        pred = int(probs[0] >= self.threshold)
 
         print(f"\n🧠 Prediction: {pred} (1 = Needs treatment, 0 = Doesn’t)")
         print(f"🔍 Probability: {probs[0]:.2}")
 
-        return pred
+        return (pred, probs)
+
+    def compare_work_interfere_inputs(self):
+        levels = ['Never', 'Rarely', 'Sometimes', 'Often', 'X']
+
+        base_input = {
+            'family_history': ['No'],
+            'obs_consequence': ['No'],
+            'benefits': ['Yes'],
+            'care_options': ['Yes'],
+            'coworkers': ['Yes'],
+            'wellness_program': ['Yes'],
+            'seek_help': ['No'],
+            'no_employees': ['100-500'],
+            'mental_health_consequence': ['No'],
+            'mental_vs_physical': ['Yes'],
+            'supervisor': ['Yes'],
+            'anonymity': ['Yes'],
+            'leave': ['Very easy']
+        }
+
+        print("\n🔍 Comparing model predictions across 'work_interfere' levels:\n")
+        for level in levels:
+            input_data = base_input.copy()
+            input_data['work_interfere'] = [level]
+            input_df = pd.DataFrame(input_data)
+            processed = self.format_Dataframe(input_df)
+
+            processed = processed[self.X_train.columns]  # Align with training columns
+
+            prob = self.treeclf.predict_proba(processed)[:, 1][0]
+            pred = int(prob >= self.threshold)
+
+            print(f"work_interfere = '{level:9}' → 🧠 Prediction: {pred} | 🔍 Probability: {prob:.2f}")
 
 
 if __name__ == "__main__":
