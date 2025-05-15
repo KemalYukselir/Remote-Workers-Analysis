@@ -110,8 +110,6 @@ class EDARemoteWorkers():
         # Drop None Age cols
         self.df_clean = self.df_clean[self.df_clean['Age'].notnull()]
 
-
-
     def check_unique(self):
         """ 
         Print all unique values in each column of the dataset.
