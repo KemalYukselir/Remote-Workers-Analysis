@@ -39,7 +39,7 @@ def project_overview_page():
     # Set the title and image
     st.title("🌍 **Remote Worker Burnout Analysis** 🌍")
 
-    st.image("https://media.licdn.com/dms/image/v2/C4E12AQFULp9_xFcyLg/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1621418267262?e=2147483647&v=beta&t=OAsQn-62BIbtXd04IhvIjhDj3Z2Bm_D_rvZl99NwFKs", width=400)
+    st.image("https://media.licdn.com/dms/image/v2/C4E12AQFULp9_xFcyLg/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1621418267262?e=2147483647&v=beta&t=OAsQn-62BIbtXd04IhvIjhDj3Z2Bm_D_rvZl99NwFKs", width=250)
     
     st.markdown(
       
@@ -58,8 +58,17 @@ def project_overview_page():
         It uses data analysis, XGBoost modelling, and comment analysis to highlight how personal and workplace conditions relate to burnout risk and support.
 
 
-        ### **References:**
+        ### **References:**        
+        <img src="https://osmihelp.org/assets/img/osmi-logo-big.png" width="150"/>
+
+        - [About OSMI](https://osmihelp.org/)
         - [OSMI Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey)
+
+        ### **About The Dataset:**    
+        - The survey was conducted by OSMI (Open Sourcing Mental Illness).
+        - A record in this survey represents a worker in tech and non tech companies.
+        - The dataset contains generic questions about themself and their workplace.
+        - I have narrowed down the dataset to only inlcude remote workers for this project scope.
 
         ### **Modules Used:**
         - **Pandas**  
