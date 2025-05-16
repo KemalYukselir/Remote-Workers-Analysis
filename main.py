@@ -75,7 +75,7 @@ def project_overview_page():
         - **NumPy**  
         - **Scikit-learn**  
         - **Xgboost**  
-        - **RandomizedSearchCV**  
+        - **GridSearchCV**  
         - **Streamlit**  
         - **Matplotlib**  
         - **Seaborn**  
@@ -84,16 +84,15 @@ def project_overview_page():
         ### **Project Highlights:**
         With all ethical practices considered, this is the best model achieved after multiple iterations:
 
-        - 🧪 **Training Accuracy:** 0.8151 🧪
-        - 🧾 **Testing Accuracy:**  0.7973 🧾
+        - 🧪 **Training Accuracy:** 0.7568 🧪
+        - 🧾 **Testing Accuracy:**  0.7027 🧾
 
         #### **📊 Classification Report:**
         | Metric         | Class 0 | Class 1 | Accuracy | Macro Avg | Weighted Avg |
         |----------------|---------|---------|----------|-----------|--------------|
-        | **Precision**  | 0.76    | 0.83    |          | 0.80      | 0.80         |
-        | **Recall**     | 0.83    | 0.77    |          | 0.80      | 0.80         |
-        | **F1-Score**   | 0.79    | 0.80    | 0.80     | 0.80      | 0.80         |
-        | **Support**    | 35      | 39      | 74       |           |              |
+        | **Precision**  | 0.69    | 0.72    |          | 0.70      | 0.70         |
+        | **Recall**     | 0.69    | 0.72    |          | 0.70      | 0.70         |
+        | **F1-Score**   | 0.69    | 0.72    | 0.70     | 0.70      | 0.70         |
       """,
         unsafe_allow_html=True
     )
@@ -143,7 +142,12 @@ def insights_page():
     st.title("📊 Remote Workers Burnout Dashboard 📊")
 
     # Display the HTML in Streamlit
-    components.html(load_html(), height=750, scrolling=False)
+    components.html(
+        load_html(),
+        height=750,
+        scrolling=True
+    )
+
 
     st.markdown("""
     ### **Key Insights:**
@@ -197,70 +201,88 @@ def further_insights_page():
     pass
 
 def model_page():
-    st.title("🧠 Burnout Support Predictor")
-
+    st.title("🧠 Burnout Predictor")
     st.subheader("Enter Your Information")
 
-    tech_company = st.selectbox("Do you work at a tech company?", [
-        "Yes", "No"
-    ])
+    tech_company = st.selectbox(
+        "Do you work at a tech company?", 
+        ["Yes", "No"], 
+        index=1  # Default to "No"
+    )
 
-    obs_consequence = st.selectbox("Have you heard of or observed negative consequences for coworkers with mental health conditions in your workplace?", [
-        "Yes", "No"
-    ])
+    obs_consequence = st.selectbox(
+        "Have you heard of or observed negative consequences for coworkers with mental health conditions in your workplace?", 
+        ["Yes", "No"],
+        index=1
 
-    benefits = st.selectbox("Does your employer provide mental health benefits?", [
-        "Yes", "No", "Don't know"
-    ])
+    )
 
-    care_options = st.selectbox("Do you know the options for mental health care your employer provides?", [
-        'Not sure', 'No', 'Yes'
-    ])
+    benefits = st.selectbox(
+        "Does your employer provide mental health benefits?", 
+        ["Yes", "No", "Don't know"],
+        index=1  # Default to "No"
+    )
 
-    coworkers = st.selectbox("Would you be willing to discuss a mental health issue with your coworkers?", [
-        "Yes", "No", "Some of them"
-    ])
+    care_options = st.selectbox(
+        "Do you know the options for mental health care your employer provides?", 
+        ['Not sure', 'No', 'Yes']
+    )
 
-    wellness_program = st.selectbox("Has your employer ever discussed mental health as part of an employee wellness program?", [
-        "Yes", "No", "Don't know"
-    ])
+    coworkers = st.selectbox(
+        "Would you be willing to discuss a mental health issue with your coworkers?", 
+        ["Yes", "No", "Some of them"]
+    )
 
-    seek_help = st.selectbox("Does your employer provide resources to learn more about mental health issues and how to seek help?", [
-        "Don't know", "No", "Yes"
-    ])
+    wellness_program = st.selectbox(
+        "Has your employer ever discussed mental health as part of an employee wellness program?", 
+        ["Yes", "No", "Don't know"],
+    )
 
-    no_employees = st.selectbox("How many employees does your company or organization have?", [
-        "1-5", "6-25", "26-100", "100-500", "More than 1000"
-    ])
+    seek_help = st.selectbox(
+        "Does your employer provide resources to learn more about mental health issues and how to seek help?", 
+        ["Don't know", "No", "Yes"],
+    )
 
-    mental_health_consequence = st.selectbox("Do you think that discussing a mental health issue with your employer would have negative consequences?", [
-        "Yes", "No", "Maybe"
-    ])
+    no_employees = st.selectbox(
+        "How many employees does your company or organization have?", 
+        ["1-5", "6-25", "26-100", "100-500", "More than 1000"]
+    )
 
-    phys_health_consequence = st.selectbox("Do you think that discussing a physical health issue with your employer would have negative consequences?", [
-        "Yes", "No", "Maybe"
-    ])
+    mental_health_consequence = st.selectbox(
+        "Do you think that discussing a mental health issue with your employer would have negative consequences?", 
+        ["Yes", "No", "Maybe"],
+        index=1  # Default to "No"
+    )
 
-    mental_vs_physical = st.selectbox("Do you feel that your employer takes mental health as seriously as physical health?", [
-        "Yes", "No", "Don't know"
-    ])
+    phys_health_consequence = st.selectbox(
+        "Do you think that discussing a physical health issue with your employer would have negative consequences?", 
+        ["Yes", "No", "Maybe"]
+    )
 
-    supervisor = st.selectbox("Would you be willing to discuss a mental health issue with your direct supervisor(s)?", [
-        "Yes", "No", "Some of them"
-    ])
+    mental_vs_physical = st.selectbox(
+        "Do you feel that your employer takes mental health as seriously as physical health?", 
+        ["Yes", "No", "Don't know"]
+    )
 
-    anonymity = st.selectbox("Is your anonymity protected if you choose to take advantage of mental health or substance abuse treatment resources?", [
-        "Yes", "No", "Don't know"
-    ])
-    
-    leave = st.selectbox("How easy is it for you to take medical leave for a mental health condition?", [
-        "Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult"
-        ])
+    supervisor = st.selectbox(
+        "Would you be willing to discuss a mental health issue with your direct supervisor(s)?", 
+        ["Yes", "No", "Some of them"]
+    )
 
+    anonymity = st.selectbox(
+        "Is your anonymity protected if you choose to take advantage of mental health or substance abuse treatment resources?", 
+        ["Yes", "No", "Don't know"],
+        index=1  # Default to "No"
+    )
+
+    leave = st.selectbox(
+        "How easy is it for you to take medical leave for a mental health condition?", 
+        ["Very easy", "Somewhat easy", "Somewhat difficult", "Very difficult"]
+    )
 
     # Construct input DataFrame
     input_dict = {
-        'tech_company': [tech_company],  
+        'tech_company': [tech_company],
         'obs_consequence': [obs_consequence],
         'benefits': [benefits],
         'care_options': [care_options],
@@ -269,7 +291,7 @@ def model_page():
         'seek_help': [seek_help],
         'no_employees': [no_employees],
         'mental_health_consequence': [mental_health_consequence],
-        'phys_health_consequence' : [phys_health_consequence],
+        'phys_health_consequence': [phys_health_consequence],
         'mental_vs_physical': [mental_vs_physical],
         'supervisor': [supervisor],
         'anonymity': [anonymity],
@@ -281,8 +303,9 @@ def model_page():
     if st.button("Predict Burnout Support Seeking"):
         prediction = model.predict_from_model(input_df)
         final_verdict = prediction[0]
-        print(prediction)
-        st.success(f"Predicted Burnout: {'This person will likely feel burnout' if final_verdict == 1 else 'This person will not feel burnout'}")
+        st.success(
+            f"Predicted Burnout: {'This person will likely feel burnout' if final_verdict == 0 else 'This person will not feel burnout'}"
+        )
 
 
 
