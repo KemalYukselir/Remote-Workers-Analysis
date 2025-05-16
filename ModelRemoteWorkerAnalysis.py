@@ -23,7 +23,7 @@ class ModelRemoteWorkerAnalysis():
         # Format for model
         self.format_Dataframe()
 
-        self.threshold = 0.47
+        self.threshold = 0.69
 
         # Encode target column ('Yes' -> 1, 'No' -> 0)
         self.df_model['treatment'] = self.df_model['treatment'].map({'Yes': 1, 'No': 0, 1:1, 0:0})
