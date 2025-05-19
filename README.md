@@ -9,14 +9,14 @@
 - Install requirements: `pip install -r requirements.txt`
 - Run the app: `streamlit run main.py`
 
-# Update Venve modules
-- Pip freeze > requirements.txt
+# Update Venv modules
+- pip freeze > requirements.txt
 - pigar generate 
 
 ## Project Description
 This project analyses and predicts burnout risk among remote workers using survey data. It combines data cleaning, data analysis, feature engineering, XGBoost modeling, and NLP comment analysis to:
 - Identify key factors influencing burnout
-- Visualize insights with Tableau and Streamlit
+- Visualise insights with Tableau and Streamlit
 - Provide a live predictor for burnout risk based on user input
 
 ## Dataset Reference
@@ -57,7 +57,7 @@ This project analyses and predicts burnout risk among remote workers using surve
   - NLP shows 'company' is the most common word in burnout comments
 - **Ethical standards:**
   - No personal identifiers used
-  - Data is anonymized and public
+  - Data is anonymised and public
   - Model and features are transparent and open source
 
 ## How it Works
@@ -76,6 +76,4 @@ This project analyses and predicts burnout risk among remote workers using surve
 ## Contact
 - [LinkedIn](https://www.linkedin.com/in/kemal-yukselir/)
 - [Email](mailto:K.Yukselir123@gmail.com)
-- [GitHub](https://github.com/KemalYukselir/Remote-Workers-Analysis)
-
 
