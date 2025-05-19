@@ -8,7 +8,7 @@ import joblib
 
 @st.cache_resource
 def load_model():
-    return joblib.load("xgb_model.pkl")
+    return joblib.load("data/xgb_model.pkl")
 
 @st.cache_resource
 # Read the local HTML file
