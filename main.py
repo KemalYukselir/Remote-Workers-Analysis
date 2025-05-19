@@ -3,6 +3,7 @@ import streamlit as st
 st.set_page_config(layout="wide")
 import pandas as pd
 import pickle
+from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
 import streamlit.components.v1 as components
 
 @st.cache_resource
