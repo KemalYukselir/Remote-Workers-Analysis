@@ -1,9 +1,5 @@
+import joblib
 from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
-import pickle
 
-
-# Train and save model
-model = ModelRemoteWorkerAnalysis()
-
-with open("data/xgb_model.pkl", "wb") as f:
-    pickle.dump(model, f)
+m = ModelRemoteWorkerAnalysis()
+joblib.dump(m.treeclf, 'data/xgb_model.pkl')  # Save only the model

@@ -2,16 +2,13 @@ import streamlit as st
 # Set page to perma wide
 st.set_page_config(layout="wide")
 import pandas as pd
-import pickle
 from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
 import streamlit.components.v1 as components
+import joblib
 
 @st.cache_resource
 def load_model():
-    # Load model
-    with open("data/xgb_model.pkl", "rb") as f:
-        model = pickle.load(f)
-        return model
+    return joblib.load("xgb_model.pkl")
 
 @st.cache_resource
 # Read the local HTML file
