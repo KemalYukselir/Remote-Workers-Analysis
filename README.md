@@ -1,7 +1,7 @@
 # 🧑‍💻 Remote Worker Burnout Analysis & Predictor
 
 ## Live Demo
-- [Streamlit App](https://remote-workers-analysis.streamlit.app/) 
+- [Streamlit App](https://huggingface.co/spaces/Kemzo/Remote-worker-analysis) 
 
 ### ✍️ By Kemal Yukselir
 
