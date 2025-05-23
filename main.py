@@ -2,7 +2,6 @@ import streamlit as st
 # Set page to perma wide
 st.set_page_config(layout="wide")
 import pandas as pd
-from ModelRemoteWorkerAnalysis import ModelRemoteWorkerAnalysis
 import streamlit.components.v1 as components
 import joblib
 
