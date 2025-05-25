@@ -65,7 +65,7 @@ def project_overview_page():
         - The survey was conducted by OSMI (Open Sourcing Mental Illness).
         - A record in this survey represents a worker in tech and non tech companies.
         - The dataset contains generic questions about themself and their workplace.
-        - I have narrowed down the dataset to only inlcude remote workers for this project scope.
+        - I have narrowed down the dataset to only include remote workers for this project scope.
 
         ### **Modules Used:**
         - **Pandas**  
@@ -145,30 +145,29 @@ def insights_page():
         scrolling=True
     )
 
-
     st.markdown("""
     ### **Key Insights:**
     **Figure 1:**
     - First I wanted to check how big the burnout problem is.
-    - An alarming 52.703% of Remote workers reported feeling burnout.
+    - An alarming 52.703% of remote workers reported feeling burnout.
                 
     **Figure 2:**
-    - Before we dive in further, I want to highlight to employers that this problem affects them and the company as a whole. Not just the employee.
     - We can see out of those who burnout, most of them feel that it "often" and "sometimes" affects the work they do.
-    - Employers addressing this issue will not only help the employee but also the company as a whole.
+    - This is interesting because it highlights to employers that this problem affects them and the company as a whole, not just the employee.
+    - Employers addressing this issue will help all parties in the workplace.
                     
     **Figure 3:**
     - Then I wanted to check if the type of company was the main reason for the burnout.
-    - From the graphs, we can see that tech and non tech companies have nearly equal distribution of burnout. So we can rule out that the type of company is not the main reason for the burnout.
-    - So it must be a company structural issue in the workplace.
+    - From the graphs, we can see that tech and non-tech companies have nearly equal distribution of burnout. So we can rule out that the type of company is not the main reason for the burnout.
+    - So it must be a company structural or personal issue in the workplace.
                 
     **Figure 4:**
-    - Figure 4 shows the 10 most common words of burntout remote workers used in the comments section.
+    - Figure 4 shows the 10 most common words burnt out remote workers used in the comments section.
     - We can see that the word company is the most common word used.
-    - This further reinforces the idea that burntout must be a more of a company structural issue
+    - This further reinforces the idea that burnout must be more of a company structural issue
                 
     **Figure 5:**
-    - Figure 5 shows that on average, the less employees a comapny has, the more liekly they are to burnout.
+    - Figure 5 shows that on average, the fewer employees a company has, the more likely they are to burnout.
     - Could this indicate that smaller companies have more pressure on their remote employees?
     - Or could it be that larger companies have more resources to help their remote employees?
 
@@ -178,16 +177,16 @@ def insights_page():
     - This could be weekly gym membership incentives, or even just a simple coffee break with the team.
     
     **Figure 7:**
-    - Figure 7 is very interesting as it shows the opposite of what I ecpected.
+    - Figure 7 is very interesting as it shows the opposite of what I expected.
     - Out of those who are burnt out, most said yes to "employer provide mental health benefits?" and "Do you know the options for mental health?"
-    - This is very interesting as maybe the employees don't push themself to use the benefits.
-    - Companies can add in weekly check ins to see if the employees need extra help or to even open them up to using resources more.
+    - This is very interesting as maybe the employees don't push themselves to use the benefits.
+    - Companies can add in weekly check-ins to see if the employees need extra help or to even open them up to using resources more.
                    
     ## **Conclusion:**
-    There is significant burnout when it comes to remote working. Both employees, employers and the company as a whole need to be aware of this since it affects all parties.
-    It has been concluded that the type of company is not the main reason for the burnout. It must be a structural issue in the workplace.
-    Some key insights show that companies need to invest more in their complyee wellness programs and provide resources to seek help for remote workers.
-    This could be weekly check ins, gym membership incentives, or even just a simple coffee break with the team.
+    There is significant burnout when it comes to remote working. Both employees, employers, and the company as a whole need to be aware of this since it affects all parties.
+    It has been concluded that the type of company is not the main reason for the burnout. It must be a structural or personal issue in the workplace.
+    Some key insights show that companies need to invest more in their employee wellness programs and provide resources to seek help for remote workers.
+    This could be weekly check-ins, gym membership incentives, or even just a simple coffee break with the team.
                 
     While remote working could benefit the employee and reduce the costs of the company, if it's not approached right, 
     it can go wrong for the employee and the company as a whole.
