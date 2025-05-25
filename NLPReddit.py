@@ -98,4 +98,9 @@ for reg in regex_to_clean:
 # Remove emojis
 df['cleaned'] = df['cleaned'].apply(remove_emoji)
 
+# Tokenise the clean version of the doucments
+
+df['tokens'] = df['cleaned'].apply(word_tokenize)
+
 print(df.head())
+
