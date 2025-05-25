@@ -3,20 +3,16 @@ import re
 import os
 import praw
 from dotenv import load_dotenv
-import praw
 
 # Conntect to api
 import requests # Connect to external websites
 from PIL import Image # display images
-import urllib.request # Similar to requests
-# from gensim.corpora import Dictionary # Mapping of all english words
 
 # Big 4
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from wordcloud import WordCloud # Create word clouds
 
 # Natural language Tokeniser
 import nltk
