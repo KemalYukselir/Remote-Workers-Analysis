@@ -78,3 +78,24 @@ def remove_emoji(string):
                            u"\U000024C2-\U0001F251"
                            "]+", flags=re.UNICODE)
     return emoji_pattern.sub(r'', string)
+
+# Going through normalisation
+
+# Step 1 lowercasing
+df['cleaned'] = df['texts'].apply(str.lower)
+
+# Step 2 Some initial cleaning.
+regex_to_clean = [r'(@.+?)\s', # Emails get captured! Usernames! Tags!
+                  r'\s\d+\s',  # Digits! Numbers!
+                  r'\s?\d+\.?', # Numbers not within spaces
+                  r'(//t.co/.+?)\s', # Web domains with a space
+                  r'(//t.co/.+?)'] # Web domains
+
+# Get rid of all matches of the regex
+for reg in regex_to_clean:
+    df['cleaned'] = df['cleaned'].apply(regex_clean, regex=reg)
+
+# Remove emojis
+df['cleaned'] = df['cleaned'].apply(remove_emoji)
+
+print(df.head())
