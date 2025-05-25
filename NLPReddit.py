@@ -104,3 +104,20 @@ df['tokens'] = df['cleaned'].apply(word_tokenize)
 
 print(df.head())
 
+# Create a list of stopwrods!
+
+stpwrd = nltk.corpus.stopwords.words('english')
+
+# Expand the list by adding punctuation in there!
+
+# A lot of special characters
+punc = '!"#$%&()*+, -./:;<=>?@[\]^_`{|}~”“\''
+
+# Create list
+punc = [x for x in punc]
+
+# Extend stopword to extend list
+stpwrd.extend(punc)
+
+# Update tokens
+df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in stpwrd])
