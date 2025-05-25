@@ -102,8 +102,6 @@ df['cleaned'] = df['cleaned'].apply(remove_emoji)
 
 df['tokens'] = df['cleaned'].apply(word_tokenize)
 
-print(df.head())
-
 # Create a list of stopwrods!
 
 stpwrd = nltk.corpus.stopwords.words('english')
@@ -121,3 +119,9 @@ stpwrd.extend(punc)
 
 # Update tokens
 df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in stpwrd])
+
+# Remove tokens that are less than 3 characters
+
+df['tokens'] = df['tokens'].apply(lambda document : [token for token in document if len(token)>2])
+
+print(df.head())
