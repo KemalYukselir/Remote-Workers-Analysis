@@ -33,8 +33,20 @@ reddit = praw.Reddit(
     client_secret=os.getenv('CLIENT_SECRET'),
     user_agent=os.getenv('USER_AGENT'))
 
-# Simple test: fetch 5 hot posts from r/Python
-for post in reddit.subreddit("Python").hot(limit=5):
-    print(f"Title: {post.title}")
-    print(f"Upvotes: {post.score}")
-    print("---")
+# Define the subreddit and search query
+subreddit_name = "remotework"
+query = "work remote"
+
+# Search the subreddit
+results = reddit.subreddit(subreddit_name).search(query, sort="new", limit=20)
+
+# Collect results as a list of dicts for proper DataFrame structure
+clean_results = []
+
+for post in results:
+    clean_results.append({
+        'texts': post.title + " " + post.selftext[:400]
+    })
+
+# Transform into dataframe with columns 'title' and 'selftext'
+df = pd.DataFrame(clean_results)
