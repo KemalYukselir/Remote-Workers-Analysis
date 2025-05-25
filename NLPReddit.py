@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 # Conntect to api
 import requests # Connect to external websites
 from PIL import Image # display images
+from gensim.corpora import Dictionary # Mapping of all english words
 
 # Big 4
 import pandas as pd
@@ -132,5 +133,18 @@ unwanted_words = ['remote','work']
 
 df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in unwanted_words])
 
-print(df.head())
 
+# Create a dictionary from the tokens provided
+
+my_terms = Dictionary(documents = df['tokens'])
+
+# Strat with empy dict
+clean_dictionary = {}
+
+for k,v in my_terms.cfs.items():
+    if v>4: # If word appears more than 5 times
+        # Add to clean dict with TF
+        clean_dictionary[my_terms[k]] = v
+
+print(df.head())
+print(clean_dictionary)
