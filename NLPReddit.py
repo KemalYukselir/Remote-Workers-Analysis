@@ -1,5 +1,6 @@
 # Regex
 import re
+import praw
 
 # Conntect to api
 import requests # Connect to external websites
@@ -20,6 +21,20 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 # Download text files to reuse
-nltk.download('stopwords') # Download list of stop words
-nltk.download('punkt_tab') # Download a list of punctuation
-nltk.download('punkt') # Download a list of punctuation
+# nltk.download('stopwords') # Download list of stop words
+# nltk.download('punkt_tab') # Download a list of punctuation
+# nltk.download('punkt') # Download a list of punctuation
+
+
+# Replace these with your actual credentials
+reddit = praw.Reddit(
+    client_id="4aP7Ma7HEgQu_VNqQvQ7QA",  # this is the "personal use script" (client_id)
+    client_secret="MCy6fKjgm1RFdxHdj3fyh3pAr6TGjw",  # your "secret"
+    user_agent="NLP analysis by u/Key_Barnacle6349"  # unique description for Reddit
+)
+
+# Simple test: fetch 5 hot posts from r/Python
+for post in reddit.subreddit("Python").hot(limit=5):
+    print(f"Title: {post.title}")
+    print(f"Upvotes: {post.score}")
+    print("---")
