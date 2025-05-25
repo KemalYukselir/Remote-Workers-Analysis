@@ -3,6 +3,7 @@ import re
 import os
 import praw
 from dotenv import load_dotenv
+import praw
 
 # Conntect to api
 import requests # Connect to external websites
