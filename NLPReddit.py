@@ -124,4 +124,13 @@ df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in
 
 df['tokens'] = df['tokens'].apply(lambda document : [token for token in document if len(token)>2])
 
+# Apply and remove the tokens
+
+# Create a list of personal unwanted tokens
+
+unwanted_words = ['remote','work']
+
+df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in unwanted_words])
+
 print(df.head())
+
