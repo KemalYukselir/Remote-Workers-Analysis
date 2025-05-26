@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import requests # Connect to external websites
 from PIL import Image # display images
 from gensim.corpora import Dictionary # Mapping of all english words
+from wordcloud import WordCloud # Create word clouds
 
 # Big 4
 import pandas as pd
@@ -19,6 +20,7 @@ import seaborn as sns
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 # Download text files to reuse
 # nltk.download('stopwords') # Download list of stop words
@@ -39,14 +41,14 @@ subreddit_name = "remotework"
 query = "work remote"
 
 # Search the subreddit
-results = reddit.subreddit(subreddit_name).search(query, sort="new", limit=20)
+results = reddit.subreddit(subreddit_name).search(query, sort="new", limit=100)
 
 # Collect results as a list of dicts for proper DataFrame structure
 clean_results = []
 
 for post in results:
     clean_results.append({
-        'texts': post.title + " " + post.selftext[:400]
+        'texts': post.selftext[:400]
     })
 
 # Transform into dataframe with columns 'title' and 'selftext'
@@ -129,22 +131,35 @@ df['tokens'] = df['tokens'].apply(lambda document : [token for token in document
 
 # Create a list of personal unwanted tokens
 
-unwanted_words = ['remote','work']
+lemmatizer = WordNetLemmatizer()
+df['lemmatized'] = df['tokens'].apply(lambda tokens: [lemmatizer.lemmatize(token) for token in tokens])
 
-df['tokens'] = df['tokens'].apply(lambda x:[words for words in x if words not in unwanted_words])
+unwanted_words = [
+    'remote', 'work', "n't", 'job', 'hey', 'working', 'laptop', 'http', 
+    'hiring', 'worked', 'remotely', 'looking', 'wfh', "'re", 'home', 'worker', 'hour', 'email', 'live',
+    'opportunity','part-time','virtual','get','like','currently','also','would', 'find','started','getting','got','new'
+]
 
+df['lemmatized'] = df['lemmatized'].apply(lambda x:[words for words in x if words not in unwanted_words])
 
 # Create a dictionary from the tokens provided
 
-my_terms = Dictionary(documents = df['tokens'])
+my_terms = Dictionary(documents = df['lemmatized'])
 
 # Strat with empy dict
 clean_dictionary = {}
 
 for k,v in my_terms.cfs.items():
-    if v>4: # If word appears more than 5 times
+    if v>8: # If word appears more than 5 times
         # Add to clean dict with TF
         clean_dictionary[my_terms[k]] = v
+
+
+wc = WordCloud(width=800, height=400, max_words=50, background_color="white").generate_from_frequencies(clean_dictionary)
+plt.figure(figsize=(9,7))
+plt.imshow(wc, interpolation="bilinear")
+plt.axis("off")
+plt.show()
 
 print(df.head())
 print(clean_dictionary)
