@@ -23,7 +23,7 @@ model = load_model()
 st.sidebar.title("Remote Worker Analysis")
 
 # Sidebar Navigation
-page = st.sidebar.selectbox("📂 Select a Page", ["Project Overview", "Ethical Standards", "Insights", "Predictor"])
+page = st.sidebar.selectbox("📂 Select a Page", ["Project Overview", "Ethical Standards", "Insights", 'Further Insights', "Predictor"])
 
 # Sidebar Image
 st.sidebar.image("assets/RemoteWorkImg.jpeg", width=900)
@@ -194,7 +194,30 @@ def insights_page():
 
 
 def further_insights_page():
-    pass
+    st.title("🧾 Further Insights into Remote Working 🧾")
+
+    st.subheader("💬 Most Frequent Words Used by Remote Workers on Reddit🧾")
+
+    # Show the uploaded word cloud image
+    st.image("assets/reddit-remote-work.png", caption="Word Cloud: Most Frequent Words in Remote Worker Reddit", use_container_width=True)
+
+    st.markdown("""
+    ### **Observations:**
+    This word cloud shows the most commonly used words from remote worker comments.
+
+    - **“Company”** appears prominently, reinforcing the earlier insight that **burnout is often tied to **organisational structure**, not the type of company.
+    - The words **“need”**, **“support”**, and **“help”** also show up often, suggesting that many workers feel underserved or unsupported in their roles.
+    - Interestingly, terms like **“everyone”** and **“know”** suggest that people either want to feel less alone or more informed about their workplace support.
+
+    ### **Why This Matters:**
+    - These word patterns highlight **communication gaps**, **emotional strain**, and the **need for stronger support structures** in remote environments.
+    - Employers could take these insights to **improve check-ins**, **offer better resources**, or **enhance mental health awareness**.
+
+    ### 📌 **Takeaway:**
+    Language matters. The words people use can **reveal workplace culture challenges**.  
+    By analysing how remote workers speak about their experiences, we can design better policies, communication strategies, and wellness programs to reduce burnout.
+    """)
+
 
 def model_page():
     st.title("🧠 Burnout Predictor")
@@ -311,7 +334,7 @@ elif page == "Ethical Standards":
     ethical_standards_page()
 elif page == "Insights":
     insights_page()
-# elif page == "Further Insights":
-#     further_insights_page()
+elif page == "Further Insights":
+    further_insights_page()
 elif page == "Predictor":
     model_page()
