@@ -155,7 +155,7 @@ for k,v in my_terms.cfs.items():
         clean_dictionary[my_terms[k]] = v
 
 
-wc = WordCloud(width=800, height=400, max_words=50, background_color="white").generate_from_frequencies(clean_dictionary)
+wc = WordCloud(width=800, height=400, max_words=50, background_color="white", colormap='plasma').generate_from_frequencies(clean_dictionary)
 plt.figure(figsize=(9,7))
 plt.imshow(wc, interpolation="bilinear")
 plt.axis("off")
